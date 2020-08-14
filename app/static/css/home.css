@@ -1,0 +1,28 @@
+.jumbotron {
+  color: #fff;
+  background-size: cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.35),rgba(0,0,0,0.35)), url('/static/images/jumbotron-bg.jpg');
+  border-radius: 0px;
+}
+.jumbotron h1, .jumbotron p {
+	text-shadow: 0px 0px 3px #000;
+  color: #fff;
+  text-transform: none;
+}
+.product-square {
+  min-height: 250px;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  line-height: 250px;
+  background-size: cover;
+  background-position: center center;
+}
+.product-square p {
+  color: #fff;
+  background: linear-gradient(rgba(73,62,42,0.45),rgba(73,62,42,0.45));
+  transition: background 2s;
+}
+.product-square p:hover {
+  background: linear-gradient(rgba(73,62,42,0.05),rgba(73,62,42,0.05));
+}

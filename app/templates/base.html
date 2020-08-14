@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="eng">
+  {% include 'head.html' %}
+	<body>
+
+		<div class="shade hidden"></div>
+		<div class="ebsloader"><img src='{{ url_for("static", filename="images/lhh-logo.png") }}' width='250' /></div>
+		<div class="loader"></div>
+
+		<header>
+			<div class="navbar navbar-light navbar-expand-md">
+            <a href='/' class="navbar-brand">
+              <img src="{{ url_for('static', filename='images/brand-logo.png') }}" width="175" alt="{{ config['COMPANY_NAME'] }}" class="float-left" />
+            </a>
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+              <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    Home
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="#products" class="nav-link">
+                    Products
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="#about" class="nav-link">
+                    About
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="#contact" class="nav-link">
+                    Contact
+                  </a>
+                </li>
+
+                <!--
+                <li class="nav-item">
+                  <a href="{# url_for('scanner.index') #}" class="nav-link">
+                    <i class="fas fa-search"></i>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="{# url_for('scanner.index') #}" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                  </a>
+                </li>
+                -->
+            <!--
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="maintenance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Shop
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                <a href="{# url_for('') #}" class="dropdown-item"><i class="fas fa-box-open"></i> Microgreens</a>
+                <a href="{# url_for('') #}" class="dropdown-item"><i class="fas fa-box"></i> Eggs</a>
+              </div>
+            </li>
+            -->
+          </ul>
+        </div>
+        <div id="navbar-spacer" class="d-sm-none d-md-block">&nbsp;</div>
+			</div>
+		</header>
+		{% if config['DEVELOPMENT'] %}
+			<div class="dev-banner">
+				<h6 class="text-center">DEVELOPMENT SERVER</h6>
+			</div>
+		{% endif %}
+
+    {% if page == 'home' %}
+      <div class="jumbotron">
+        <center>
+          <br />
+          <h1 class="display-4">Microgreens and more!</h1>
+          <p>
+            Here at Little Hare Homestead, we strive to provide you with the healthiest and tastiest products.
+          </p>
+          <br />
+        </center>
+      </div>
+    {% endif %}
+    
+		<section class="container{% if fluid %}-fluid{% endif %} mb-5 mt-4">
+			<div class="row">
+				<div class="col">
+
+					{% include 'alert.html' %}
+
+					{% block content %}
+					{% endblock %}
+
+				</div>
+			</div>
+		</section>
+
+    <footer class="mt-5 py-5">
+      <div class="container">
+        <div class="row py-5">
+          
+          <div class="col pb-4">
+            <h5>
+              <a id="contact"></a>
+              Contact Us
+            </h5>
+            <p>
+              We'd love to hear from you!
+              <ul>
+                <li>
+                  <b>Email:</b> <a href="mailto:contact@littleharehomestead.com">contact@littleharehomestead.com</a>
+                </li>
+              </ul>
+            </p>
+          </div>
+
+          <div class="col pb-4">
+            <h5>Join our newsletter!</h5>
+            <input type='text' class="form-control" />
+            <button class="btn btn-primary">Sign up!</button>
+          </div>
+
+        </div>
+
+        <center>
+          <img src="{{ url_for('static', filename='images/brand-logo.png') }}" width="150" />
+        </center>
+
+      </div>
+    </footer>
+
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Delete </h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you want to delete this item? This cannot be undone.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Cancel</button>
+						<button type="button" class="btn btn-danger" id="confirmDelete"><i class="fas fa-times"></i> Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<script type="text/javascript">
+			var oldConfig = "SESSION['config']";
+		</script>
+		<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+		<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/colreorder/1.5.1/js/dataTables.colReorder.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+		<script src="{{ url_for('static', filename='js/jquery-canvas-sparkles.min.js') }}"></script>
+		{{ moment.include_moment() }}
+		<script src="{{ url_for('static', filename='js/moment-timezone-with-data.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/tempusdominus-bootstrap-4.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/fullcalendar.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/slugify.js') }}"></script>
+		<!--<script src="https://cdn.ckeditor.com/ckeditor5/12.2.0/classic/ckeditor.js"></script>-->
+		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+		{% if js %}
+			<script src="{{ url_for('static', filename='js/'+js) }}"></script>
+		{% endif %}
+		{% if calendar %}
+			{% include 'schedule/calendar.html' %}
+		{% endif %}
+	</body>
+</html>
