@@ -42,5 +42,5 @@ class Config(object):
     LOG_DIR = logdir
     BASE_URL = os.environ.get('BASE_URL') or 'localhost:5000'
     ADMINS = os.environ.get('ADMINS') or ''
-    ADMINS = ADMINS.split(()
+    ADMINS = ADMINS.split()
     COMPANY_NAME = os.environ.get('COMPANY_NAME') or 'Webstore'
