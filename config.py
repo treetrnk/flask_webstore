@@ -40,6 +40,7 @@ class Config(object):
     BASE_DIR = basedir
     UPLOAD_DIR = uploaddir
     LOG_DIR = logdir
-    BASE_URL = os.environ.get('BASE_URL') or 'https://littleharehomestead.com'
-    ADMINS = ['web@littleharehomestead.com']
+    BASE_URL = os.environ.get('BASE_URL') or 'localhost:5000'
+    ADMINS = os.environ.get('ADMINS') or ''
+    ADMINS = ADMINS.split(()
     COMPANY_NAME = os.environ.get('COMPANY_NAME') or 'Webstore'
