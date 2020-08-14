@@ -225,10 +225,18 @@ def handle_404(e):
 def handle_500(e):
     return render_template("500-error.html", title="Internal Server Error", error=e)
 
+@bp.route("/uploads/<string:filename>")
+def uploads(filename):
+    return send_from_directory('../uploads', filename)
+
 @bp.route("/")
 @bp.route("/home")
 def index():
-    return render_template('main/index.html', page='home', css='home')
+    return render_template('main/index.html', 
+            page='home', 
+            css='home',
+            js='home.js',
+        )
 
 @bp.route("/<path:path>")
 @login_required
