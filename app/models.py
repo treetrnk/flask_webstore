@@ -24,16 +24,15 @@ groups = db.Table('groups',
 ##########
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    username = db.Column(db.String(20), unique=True)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(100))
     avatar = db.Column(db.String(200), default='')
-    email = db.Column(db.String(120))
-    password = db.Column(db.String(1000), nullable=False, default='webstore')
+    password = db.Column(db.String(1000), default='webstore')
     groups = db.relationship('Group', secondary=groups, lazy='subquery',
             backref=db.backref('users', lazy=True))
     active = db.Column(db.Boolean, default=True, nullable=False)
-    #updater_id = db.Column(db.Integer, db.ForeignKey('user.id'), onupdate=current_user.id, default=current_user.id)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
     
     def set_password(self, password):
@@ -56,19 +55,6 @@ class User(UserMixin, db.Model):
 
     def display_name(self):
         return self.short_name()
-
-    def set_session_variables(self):
-        incoming = Shipment.l_query().filter_by(direction='incoming').order_by(desc('default'),desc('created')).first()
-        outgoing = Shipment.l_query().filter_by(direction='outgoing').order_by(desc('default'),desc('created')).first()
-        session['incoming'] = incoming.id if incoming else None
-        session['outgoing'] = outgoing.id if outgoing else None
-        session['scanmode'] = 'checkin'
-        session['selected_boxes'] = {}
-        session['marketplace'] = Marketplace.l_query().order_by(Marketplace.default.desc(), 'id').first().name
-        destinations = Destination.l_query().all()
-        for d in destinations:
-            session['selected_boxes'][d.name] = None
-        current_app.logger.info(f'Default session variables set for {self.username}: {session}')
 
     def in_group(self, group_names):
         group_names = group_names.split(',')
@@ -97,7 +83,6 @@ def load_user(id):
 ## GROUP #######################################################################
 ###########
 class Group(db.Model):
-    #__bind_key__ = 'shared_db'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(75), unique=True)
     description = db.Column(db.String(300), nullable=True)
@@ -199,12 +184,30 @@ class Comment(db.Model):
 
 
 #############
+## CATEGORY #####################################################################
+#############
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    description = db.Column(db.String(1000))
+    priority = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f'Category({self.id}, {self.name})'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+#############
 ## PRODUCT #####################################################################
 #############
 class Product(db.Model):
-    #__bind_key__ = 'shared_db'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False, unique=True)
+    sku = db.Column(db.String(200), unique=True)
+    barcode = db.Column(db.String(100), unique=True)
+    image_path = db.Column(db.String(1000))
     available = db.Column(db.Integer, default=0)
     capacity = db.Column(db.Integer, nullable=False, default=0)
     price = db.Column(db.Float)
@@ -214,7 +217,7 @@ class Product(db.Model):
     notes = db.Column(db.String(50))
     comment = db.Column(db.String(50))
     location = db.Column(db.String(200))
-    #images = 
+    category = db.relationship('Category', backref=backref('products', order_by='Product.name'), lazy=True)
     active = db.Column(db.Boolean, default=True)
     updater_id = db.Column(db.Integer, db.ForeignKey('user.id'))#, onupdate=current_user.id, default=current_user.id)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
@@ -284,4 +287,35 @@ class Product(db.Model):
     def __str__(self):
         return f'{self.name} ({self.barcode})'
 
+
+#############
+## PAGE #####################################################################
+#############
+class Page(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), unique=True, nullable=False)
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    body = db.Column(db.String(5000))
+    priority = db.Column(db.Integer)
+    active = db.Column(db.Boolean, default=True)
+
+    def __repr__(self):
+        return f'Page({self.id}, {self.title})'
+
+    def __str__(self):
+        return f'{self.title}'
+
+#############
+## SETTING #####################################################################
+#############
+class Setting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.String(5000))
+
+    def __repr__(self):
+        return f'Setting({self.id}, {self.name})'
+
+    def __str__(self):
+        return f'{self.name}'
 
