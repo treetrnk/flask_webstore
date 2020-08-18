@@ -159,6 +159,9 @@ class AddProduct(SaveObjView):
     redirect = {'endpoint': 'admin.products'}
     context = {'tab': 'products'}
 
+    def extra(self):
+        self.form.category_id.choices = [[0,'']] + [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
+
 bp.add_url_rule("/admin/product/add", 
         view_func=login_required(AddProduct.as_view('add_product')))
 
@@ -173,6 +176,9 @@ class EditProduct(SaveObjView):
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
     context = {'tab': 'products'}
+
+    def extra(self):
+        self.form.category_id.choices = [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
 
 bp.add_url_rule("/admin/product/edit/<int:obj_id>", 
         view_func=login_required(EditProduct.as_view('edit_product')))

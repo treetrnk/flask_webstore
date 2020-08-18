@@ -40,6 +40,7 @@ class Config(object):
     BASE_DIR = basedir
     UPLOAD_DIR = uploaddir
     LOG_DIR = logdir
+    PRODUCT_LOG_DIR = os.path.join(logdir, 'products/')
     BASE_URL = os.environ.get('BASE_URL') or 'localhost:5000'
     ADMINS = os.environ.get('ADMINS') or ''
     ADMINS = ADMINS.split()

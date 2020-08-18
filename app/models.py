@@ -8,10 +8,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, current_user
 from sqlalchemy import desc, or_
 from sqlalchemy.orm import backref
-#from slugify import slugify
 from app import db, login
 from app.functions import round_half_up, log_change, log_new
-#from markdown import markdown
+from slugify import slugify
+from markdown import markdown
 from app.email import send_email
 
 groups = db.Table('groups',
@@ -210,6 +210,7 @@ class Product(db.Model):
     sku = db.Column(db.String(200), unique=True)
     barcode = db.Column(db.String(100), unique=True)
     image_path = db.Column(db.String(1000))
+    description = db.Column(db.String(5000))
     available = db.Column(db.Integer, default=0)
     capacity = db.Column(db.Integer, nullable=False, default=0)
     price = db.Column(db.Float)

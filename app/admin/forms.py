@@ -26,12 +26,14 @@ class ProductEditForm(FlaskForm):
                 validators=[DataRequired(), Length(max=200)])
     barcode = StringField(f'Barcode', validators=[Length(max=50)])
     image_path = StringField('Image URL') 
+    description = TextAreaField('Description', validators=[Length(max=5000)])
+    category_id = SelectField('Category', coerce=int, render_kw={'data_type': 'select2'})
     price = FloatField(f'Price', validators=[DataRequired()], 
             render_kw={'type': 'number', 'step': '.01'})
     on_sale = BooleanField('On Sale?', description="")
-    sale_price = FloatField(f'Sale Price', validators=[DataRequired()], 
+    sale_price = FloatField(f'Sale Price', validators=[Optional()], 
             render_kw={'type': 'number', 'step': '.01'})
-    packaging = SelectField('Packaging', validators=[Length(max=50)])
+    packaging = StringField('Packaging', validators=[Length(max=50)])
     notes = StringField('Notes', validators=[Length(max=50)])
     comment = StringField('Comment', validators=[Length(max=50)])
     available = IntegerField('Available', validators=[Optional()], render_kw={'type': 'number'})
