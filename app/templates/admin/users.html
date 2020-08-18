@@ -3,26 +3,29 @@
 
 {% include 'admin/nav.html' %}
 
+<a href="{{ url_for('admin.add_user') }}" class="btn btn-primary btn-lg float-right">
+  <i class="fas fa-plus"></i>
+  Add User
+</a>
+
 <h1>Users</h1>
 
 <table class="table table-striped table-hover datatable">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Email</th>
+      <th>Password</th>
+      <th>Subscribed</th>
     </tr>
   </thead>
   <tbody>
     {% for user in users %}
       <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>{{ user.email }}</td>
+        <td class="text-center">
+          {% if user.password != None %}<i class="fas fa-check-circle text-success"></i>{% endif %}
+        </td>
+        <td>{{ user.subscribed }}</td>
       </tr>
     {% endfor %}
   </tbody>

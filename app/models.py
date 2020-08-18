@@ -32,6 +32,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(1000), default='webstore')
     groups = db.relationship('Group', secondary=groups, lazy='subquery',
             backref=db.backref('users', lazy=True))
+    subscribed = db.Column(db.Boolean, nullable=False, default=False)
     active = db.Column(db.Boolean, default=True, nullable=False)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
     
@@ -192,6 +193,7 @@ class Category(db.Model):
     description = db.Column(db.String(1000))
     priority = db.Column(db.Integer)
 
+
     def __repr__(self):
         return f'Category({self.id}, {self.name})'
 
@@ -217,6 +219,7 @@ class Product(db.Model):
     notes = db.Column(db.String(50))
     comment = db.Column(db.String(50))
     location = db.Column(db.String(200))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship('Category', backref=backref('products', order_by='Product.name'), lazy=True)
     active = db.Column(db.Boolean, default=True)
     updater_id = db.Column(db.Integer, db.ForeignKey('user.id'))#, onupdate=current_user.id, default=current_user.id)

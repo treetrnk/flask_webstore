@@ -6,17 +6,34 @@ from app import db
 from flask_login import login_required, current_user
 #from app.auth.authenticators import permission_required, user_permission_required
 from app.main.forms import (
-        BoxlistChangeForm, 
-        MarketplaceEditForm, DestinationEditForm, BoxlistEditForm, 
-        SetBoxlistForm, DeleteCommentForm, ThemeEditForm
+        DeleteCommentForm, SubscribeForm,
     )
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
-#from app.models import (
-#    )
+from app.models import (
+    User
+)
+
+@bp.route("/subscribe", methods=['GET', 'POST'])
+def subscribe():
+    form = SubscribeForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            existing_user.subscribed = True
+        else:
+            user = User(
+                    email = form.email.data,
+                    subscribed = True
+                )
+            db.session.add(user)
+        db.session.commit()
+        return render_template('main/subscribed.html')
+    flash('Unable to subscribe. Your email address was not valid.', 'danger')
+    return redirect(url_for('main.index'))
 
 @bp.route("/settings")
 @login_required
@@ -35,18 +52,6 @@ def settings():
             form=form,
             current_bl=Boxlist.query.filter_by(current=current_app.config['COMPANY']).first(),
         )
-
-@bp.route('/main/settings/marketplace/get-defaults', methods=['POST'])
-@login_required
-def get_marketplace_defaults():
-    marketplace = Marketplace.l_query().filter_by(id=request.form.get('marketplace_id')).first_or_404()
-    output = {
-            'profit_multiplier': marketplace.profit_multiplier,
-            'marketplace_fee': marketplace.marketplace_fee,
-        }
-    response = jsonify(output)
-    response.status_code = 200
-    return response
 
 @bp.route("/submit-comment", methods=['POST'])
 @group_required('fulfillment')

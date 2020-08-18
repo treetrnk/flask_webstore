@@ -25,34 +25,33 @@ from app.main.generic_views import ListView
 @bp.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('scanner.index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user is None:
-            flash(f'User with username <b>{form.username.data}</b> does not exist!', 'danger')
-            current_app.logger.warning(f'Permissions Warning: Failed login attempt non-existant user {form.username.data}.\n')
+            flash(f'User with email <b>{form.email.data}</b> does not exist!', 'danger')
+            current_app.logger.warning(f'Permissions Warning: Failed login attempt non-existant user {form.email.data}.\n')
             return redirect(url_for('auth.login'))
         if not user.active:
             flash('Cannot login. Your account has been deactivated. Please speak with your supervisor to gain login privileges.', 'danger')
-            current_app.logger.warning(f'Permissions Warning: Failed login for inactive user {form.username.data}.\n')
+            current_app.logger.warning(f'Permissions Warning: Failed login for inactive user {form.email.data}.\n')
             return redirect(url_for('auth.login'))
         if not user.check_password(form.password.data):
-            flash('Invalid username or password!', 'danger')
-            current_app.logger.warning(f'Permissions Warning: Failed login attempt for user {form.username.data}.\n')
+            flash('Invalid email or password!', 'danger')
+            current_app.logger.warning(f'Permissions Warning: Failed login attempt for user {form.email.data}.\n')
             return redirect(url_for('auth.login'))
-        current_app.logger.info(f'{user.username} logged in.\n')
-        current_app.logger.info(f'Remember {user.username} login? ' + str(form.remember_me.data) + '.\n')
+        current_app.logger.info(f'{user.email} logged in.\n')
+        current_app.logger.info(f'Remember {user.email} login? ' + str(form.remember_me.data) + '.\n')
         login_user(user, remember=form.remember_me.data)
-        current_user.set_session_variables()
         flash('Login successful!', 'success')
-        return redirect(url_for('scanner.index'))
+        return redirect(url_for('admin.index'))
     form.remember_me.data = True
     return render_template('auth/login.html', title='Login', form=form, user='')
 
 @bp.route("/logout")
 def logout():
-    current_app.logger.info(f'{current_user.username} logged out.\n')
+    current_app.logger.info(f'{current_user.email} logged out.\n')
     logout_user()
     return redirect(url_for('auth.login'))
 

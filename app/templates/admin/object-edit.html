@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% include 'admin/nav.html' %}
+
+<h2 class="mb-4">{{ title|safe }}</h2>
+
+<div class="row">
+	<div class="col-sm-10">
+
+		<form method="post" action="">
+			{{ form.hidden_tag() }}
+
+      {% include 'form-fields.html' %}
+
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col">
+					<button type="submit" class="btn btn-primary">
+						<i class="fas fa-save"></i>
+						Save {{ model_name }}
+					</button>
+					<a href="{{ url_for(**redirect) }}" class="btn btn-secondary">
+						<i class="fas fa-ban"></i>
+						Cancel
+					</a>
+					{% if action == 'Edit' and current_user.in_group('admin') %}
+						<button type='button' class="btn btn-danger delete-btn float-right" data-id="{{ obj.id }}">
+								<i class="fas fa-trash-alt"></i>
+								Delete
+						</button>
+					{% endif %}
+				</div>	
+			</div>
+
+		</form>
+	</div>
+</div>
+{% if action == 'Edit' and current_user.in_group('admin') %}
+	<form action="{{ url_for(delete_endpoint) }}" id="delete{{ obj.id }}" method="post">
+		{{ delete_form.hidden_tag() }}
+	</form>
+{% endif %}
+
+{% endblock %}

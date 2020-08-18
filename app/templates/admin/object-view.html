@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>View {{ obj.__class__.__name__ }}</h1>
+
+{% for field,value in obj.__dict__ %}
+<div class="row">
+  <div class="col-md-3 col-6 text-right">
+    <b>{{ field }}</b>
+  </div>
+  <div class="col">
+    <b>{{ value }}</b>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

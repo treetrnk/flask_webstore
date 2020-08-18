@@ -1,6 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="row justify-content-center">
+  <div class="col-md-6 col-10">
+    <div class="card">
+      <div class="card-body">
 
+        <h2 class="mb-4">Login</h2>
+
+        <form method="post" action="">
+  
+          {{ form.hidden_tag() }}
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            {% if form.email.errors %}
+              {{ form.email(class="form-control form-control-lg is-invalid",placeholder="Email") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control form-control-lg", placeholder="Email") }}
+            {% endif %}
+          </div>
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            {% if form.password.errors %}
+              {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Password") }}
+              <div class="invalid-feedback">
+                {% for error in form.password.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.password(class="form-control form-control-lg",placeholder="Password") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group form-check mb-3 text-center">
+              {{ form.remember_me(class="form-check-input") }}
+              {{ form.remember_me.label(class="form-check-label") }}
+          </div>
+
+          {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+  
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

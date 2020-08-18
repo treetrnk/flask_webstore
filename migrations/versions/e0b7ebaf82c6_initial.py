@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: fbe054ee62d2
+Revision ID: e0b7ebaf82c6
 Revises: 
-Create Date: 2020-08-17 13:11:32.871130
+Create Date: 2020-08-18 10:25:23.367296
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fbe054ee62d2'
+revision = 'e0b7ebaf82c6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -52,6 +52,7 @@ def upgrade():
     sa.Column('last_name', sa.String(length=100), nullable=True),
     sa.Column('avatar', sa.String(length=200), nullable=True),
     sa.Column('password', sa.String(length=1000), nullable=True),
+    sa.Column('subscribed', sa.Boolean(), nullable=False),
     sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
@@ -83,9 +84,11 @@ def upgrade():
     sa.Column('notes', sa.String(length=50), nullable=True),
     sa.Column('comment', sa.String(length=50), nullable=True),
     sa.Column('location', sa.String(length=200), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('updater_id', sa.Integer(), nullable=True),
     sa.Column('updated', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
     sa.ForeignKeyConstraint(['updater_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('barcode'),

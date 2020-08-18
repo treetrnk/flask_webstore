@@ -3,26 +3,34 @@
 
 {% include 'admin/nav.html' %}
 
-<h1>Users</h1>
+<a href="{{ url_for('admin.add_group') }}" class="btn btn-primary btn-lg float-right">
+  <i class="fas fa-plus"></i>
+  Add Group
+</a>
+
+<h1>Groups</h1>
 
 <table class="table table-striped table-hover datatable">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Name</th>
+      <th>Description</th>
     </tr>
   </thead>
   <tbody>
-    {% for user in users %}
+    {% for group in groups %}
       <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>
+          <a href="{{ url_for('admin.edit_group', obj_id=group.id) }}" >
+            <i class="fas fa-edit"></i>
+            <span class="badge badge-{{ group.style }}">
+              {{ group.name }}
+            </span>
+          </a>
+        </td>
+        <td>
+          {{ group.description }}
+        </td>
       </tr>
     {% endfor %}
   </tbody>

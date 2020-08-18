@@ -95,8 +95,8 @@
 				<div class="col">
 
           {% if page != 'home' %}
-            {% include 'alert.html' %}
           {% endif %}
+            {% include 'alert.html' %}
 
 					{% block content %}
 					{% endblock %}
@@ -126,12 +126,14 @@
 
           <div class="col pb-4">
             <h5>Join our newsletter!</h5>
-            <div class="input-group">
-              <input type='email' class="form-control" placeholder="Email Address" />
-              <div class="input-group-append">
-                <button class="btn btn-primary">Sign up!</button>
+            <form method="post" action="{{ url_for('main.subscribe') }}">
+              <div class="input-group">
+                <input name='email' type='email' class="form-control" placeholder="Email Address" />
+                <div class="input-group-append">
+                  <button class="btn btn-primary">Sign up!</button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
 
         </div>

@@ -3,7 +3,12 @@
 
 {% include 'admin/nav.html' %}
 
-<h1>Users</h1>
+<a href="{{ url_for('admin.add_page') }}" class="btn btn-primary btn-lg float-right">
+  <i class="fas fa-plus"></i>
+  Add Page
+</a>
+
+<h1>Pages</h1>
 
 <table class="table table-striped table-hover datatable">
   <thead>
@@ -16,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for user in users %}
+    {% for page in pages %}
       <tr>
         <td></td>
         <td></td>

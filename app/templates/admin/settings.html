@@ -3,7 +3,12 @@
 
 {% include 'admin/nav.html' %}
 
-<h1>Users</h1>
+<a href="{{ url_for('admin.add_setting') }}" class="btn btn-primary btn-lg float-right">
+  <i class="fas fa-plus"></i>
+  Add Setting
+</a>
+
+<h1>Settings</h1>
 
 <table class="table table-striped table-hover datatable">
   <thead>
@@ -16,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for user in users %}
+    {% for setting in settings %}
       <tr>
         <td></td>
         <td></td>

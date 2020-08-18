@@ -10,9 +10,19 @@ from datetime import datetime
 from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
+from app.admin.forms import (
+        UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
+        PageEditForm,
+    )
 from app.models import (
         User, Group, Category, Product, Setting, Page,
     )
+
+@bp.route('/admin')
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('admin.products'))
+    return redirect(url_for('auth.login'))
 
 ##########
 ## USER ################################################################
@@ -21,7 +31,7 @@ from app.models import (
 @bp.route('/admin/users')
 @login_required
 def users():
-    users = User.query.order_by('name')
+    users = User.query.order_by('email')
     return render_template('admin/users.html', 
             tab='users', 
             users=users, 
@@ -37,6 +47,7 @@ class AddUser(SaveObjView):
     delete_endpoint = 'admin.delete_user'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.users'}
+    context = {'tab': 'users'}
 
 bp.add_url_rule("/admin/user/add", 
         view_func=login_required(AddUser.as_view('add_user')))
@@ -51,6 +62,7 @@ class EditUser(SaveObjView):
     delete_endpoint = 'admin.delete_user'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.users'}
+    context = {'tab': 'users'}
 
 bp.add_url_rule("/admin/user/edit/<int:obj_id>", 
         view_func=login_required(EditUser.as_view('edit_user')))
@@ -62,7 +74,7 @@ class DeleteUser(DeleteObjView):
     redirect = {'endpoint': 'admin.users'}
 
 bp.add_url_rule("/admin/user/delete", 
-        view_func = login_required(DeleteProuct.as_view('delete_user')))
+        view_func = login_required(DeleteUser.as_view('delete_user')))
 
 ###########
 ## GROUP ################################################################
@@ -87,6 +99,10 @@ class AddGroup(SaveObjView):
     delete_endpoint = 'admin.delete_group'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.groups'}
+    context = {'tab': 'groups'}
+
+    def extra(self):
+        self.form.style.choices = Group.STYLE_CHOICES
 
 bp.add_url_rule("/admin/group/add", 
         view_func=login_required(AddGroup.as_view('add_group')))
@@ -94,13 +110,17 @@ bp.add_url_rule("/admin/group/add",
 class EditGroup(SaveObjView):
     title = "Edit Group"
     model = Group
-    form = SettingEditForm
+    form = GroupEditForm
     action = 'Edit'
     log_msg = 'updated a group'
     success_msg = 'Group updated.'
     delete_endpoint = 'admin.delete_group'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.groups'}
+    context = {'tab': 'groups'}
+
+    def extra(self):
+        self.form.style.choices = Group.STYLE_CHOICES
 
 bp.add_url_rule("/admin/group/edit/<int:obj_id>", 
         view_func=login_required(EditGroup.as_view('edit_group')))
@@ -112,7 +132,7 @@ class DeleteGroup(DeleteObjView):
     redirect = {'endpoint': 'admin.groups'}
 
 bp.add_url_rule("/admin/group/delete", 
-        view_func = login_required(DeleteProuct.as_view('delete_group')))
+        view_func = login_required(DeleteGroup.as_view('delete_group')))
 
 ##############
 ## PRODUCT ################################################################
@@ -137,6 +157,7 @@ class AddProduct(SaveObjView):
     delete_endpoint = 'admin.delete_product'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
+    context = {'tab': 'products'}
 
 bp.add_url_rule("/admin/product/add", 
         view_func=login_required(AddProduct.as_view('add_product')))
@@ -144,13 +165,14 @@ bp.add_url_rule("/admin/product/add",
 class EditProduct(SaveObjView):
     title = "Edit Product"
     model = Product
-    form = SettingEditForm
+    form = ProductEditForm
     action = 'Edit'
     log_msg = 'updated a product'
     success_msg = 'Product updated.'
     delete_endpoint = 'admin.delete_product'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
+    context = {'tab': 'products'}
 
 bp.add_url_rule("/admin/product/edit/<int:obj_id>", 
         view_func=login_required(EditProduct.as_view('edit_product')))
@@ -162,7 +184,7 @@ class DeleteProduct(DeleteObjView):
     redirect = {'endpoint': 'admin.products'}
 
 bp.add_url_rule("/admin/product/delete", 
-        view_func = login_required(DeleteProuct.as_view('delete_product')))
+        view_func = login_required(DeleteProduct.as_view('delete_product')))
 
 ##############
 ## CATEGORY ################################################################
@@ -186,7 +208,8 @@ class AddCategory(SaveObjView):
     success_msg = 'Category added.'
     delete_endpoint = 'admin.delete_category'
     template = 'admin/object-edit.html'
-    redirect = {'endpoint': 'admin.category'}
+    redirect = {'endpoint': 'admin.categories'}
+    context = {'tab': 'categories'}
 
 bp.add_url_rule("/admin/category/add", 
         view_func=login_required(AddCategory.as_view('add_category')))
@@ -201,6 +224,7 @@ class EditCategory(SaveObjView):
     delete_endpoint = 'admin.delete_category'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.categories'}
+    context = {'tab': 'categories'}
 
 bp.add_url_rule("/admin/category/edit/<int:obj_id>", 
         view_func=login_required(EditCategory.as_view('edit_category')))
@@ -221,7 +245,7 @@ bp.add_url_rule("/admin/category/delete",
 @bp.route('/admin/pages')
 @login_required
 def pages():
-    pages = Page.query.order_by('name')
+    pages = Page.query.order_by('title')
     return render_template('admin/pages.html', 
             tab='pages', 
             pages=pages, 
@@ -237,6 +261,7 @@ class AddPage(SaveObjView):
     delete_endpoint = 'admin.delete_page'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.pages'}
+    context = {'tab': 'pages'}
 
 bp.add_url_rule("/admin/page/add", 
         view_func=login_required(AddPage.as_view('add_page')))
@@ -251,6 +276,7 @@ class EditPage(SaveObjView):
     delete_endpoint = 'admin.delete_page'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.pages'}
+    context = {'tab': 'pages'}
 
 bp.add_url_rule("/admin/page/edit/<int:obj_id>", 
         view_func=login_required(EditPage.as_view('edit_page')))
@@ -287,6 +313,7 @@ class AddSetting(SaveObjView):
     delete_endpoint = 'admin.delete_setting'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.settings'}
+    context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/setting/add", 
         view_func=login_required(AddSetting.as_view('add_setting')))
@@ -301,6 +328,7 @@ class EditSetting(SaveObjView):
     delete_endpoint = 'admin.delete_setting'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.setting'}
+    context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/setting/edit/<int:obj_id>", 
         view_func=login_required(EditSetting.as_view('edit_setting')))

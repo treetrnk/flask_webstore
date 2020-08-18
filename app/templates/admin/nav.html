@@ -1,20 +1,22 @@
-<ul class="nav nav-tabs">
+<h1 class="text-center mb-4 text-secondary"> = Admin Panel =</h1>
+
+<ul class="nav nav-tabs mb-4">
   <li class="nav-item">
-    <a class="nav-link active" href="#">Products</a>
+    <a class="nav-link {% if tab=='products' %}active{% endif %}" href="{{ url_for('admin.products') }}">Products</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">Categories</a>
+    <a class="nav-link {% if tab=='categories' %}active{% endif %}" href="{{ url_for('admin.categories') }}">Categories</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">Users</a>
+    <a class="nav-link {% if tab=='pages' %}active{% endif %}" href="{{ url_for('admin.pages') }}">Pages</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">Groups</a>
+    <a class="nav-link {% if tab=='users' %}active{% endif %}" href="{{ url_for('admin.users') }}">Users</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">Pages</a>
+    <a class="nav-link {% if tab=='groups' %}active{% endif %}" href="{{ url_for('admin.groups') }}">Groups</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">Settings</a>
+    <a class="nav-link {% if tab=='settings' %}active{% endif %}" href="{{ url_for('admin.settings') }}">Settings</a>
   </li>
 </ul>

@@ -2,11 +2,51 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import (
         DateField, HiddenField,StringField, TextAreaField, SelectField, 
-        IntegerField, SelectMultipleField, FieldList, FormField, FloatField
+        IntegerField, SelectMultipleField, FieldList, FormField, FloatField,
+        BooleanField
     )
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, InputRequired
 
 required = " <span class='text-danger'>*</span>"
+
+class UserEditForm(FlaskForm):
+    pass
+
+class GroupEditForm(FlaskForm):
+    name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=75)])
+    description = TextAreaField('Description', validators=[Length(max=300)])
+    style = SelectField(f'Style{required}', validators=[Length(max=75)])
+
+class SettingEditForm(FlaskForm):
+    name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=100)])
+    value = TextAreaField(f'value{required}', validators=[DataRequired(), Length(max=5000)])
+
+class ProductEditForm(FlaskForm):
+    name = StringField(f'Name{required}', 
+                validators=[DataRequired(), Length(max=200)])
+    barcode = StringField(f'Barcode', validators=[Length(max=50)])
+    image_path = StringField('Image URL') 
+    price = FloatField(f'Price', validators=[DataRequired()], 
+            render_kw={'type': 'number', 'step': '.01'})
+    on_sale = BooleanField('On Sale?', description="")
+    sale_price = FloatField(f'Sale Price', validators=[DataRequired()], 
+            render_kw={'type': 'number', 'step': '.01'})
+    packaging = SelectField('Packaging', validators=[Length(max=50)])
+    notes = StringField('Notes', validators=[Length(max=50)])
+    comment = StringField('Comment', validators=[Length(max=50)])
+    available = IntegerField('Available', validators=[Optional()], render_kw={'type': 'number'})
+    capacity = IntegerField(f'Capacity{required}', validators=[InputRequired()], render_kw={'type': 'number'})
+    active = BooleanField('Active?', 
+            description="<small class='text-muted ml-4'>Deactivate if the product should no longer be used.</small>",
+            render_kw={'data_type': 'switch'})
+
+class CategoryEditForm(FlaskForm):
+    name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField(f'Description{required}', validators=[DataRequired(), Length(max=1000)])
+    priority = IntegerField(f'Priority')
+
+class PageEditForm(FlaskForm):
+    pass
 
 class CommentForm(FlaskForm):
     user_id = HiddenField('User')
@@ -14,34 +54,6 @@ class CommentForm(FlaskForm):
     event_id = HiddenField('event id')
     ticket_id = HiddenField('ticket id')
     comment = TextAreaField('Comment')
-
-class BoxlistChangeForm(FlaskForm):
-    boxlist = SelectField(f'Box List{required}', coerce=int)
-
-class MarketplaceEditForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=150)])
-    profit_multiplier = FloatField('Default Profit Multiplier', validators=[Optional()],
-            description='<small class="text-muted">Will be used to automatically fill fields when creating a label for this marketplace</small>'
-        )
-    marketplace_fee = FloatField('Default Marketplace Fee', validators=[Optional()],
-            description='<small class="text-muted">Will be used to automatically fill fields when creating a label for this marketplace</small>'
-        )
-
-class DestinationEditForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=150)])
-    percent = IntegerField('Percent', validators=[DataRequired()], render_kw={'type': 'number'})
-
-class BoxlistEditForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=150)])
-    boxnames = SelectMultipleField('Box Names', validators=[DataRequired()], render_kw={'data_type': 'select2-tags'})
-
-class ThemeEditForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=150)])
-    text_color = StringField('Text Color', validators=[DataRequired(), Length(max=7)], render_kw={'type': 'color'})
-    background_color = StringField('Background Color', validators=[DataRequired(), Length(max=7)], render_kw={'type': 'color'})
-
-class SetBoxlistForm(FlaskForm):
-    boxlist_id = IntegerField('boxlist_id', validators=[DataRequired()])
 
 class DeleteCommentForm(FlaskForm):
     comment_id = HiddenField('Comment ID', validators=[DataRequired()])

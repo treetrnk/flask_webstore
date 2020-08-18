@@ -43,13 +43,13 @@ def create_app(test_config=None):
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
 
-    from app.main import bp as shop_bp
+    from app.shop import bp as shop_bp
     app.register_blueprint(shop_bp)
 
-    from app.main import bp as blog_bp
+    from app.blog import bp as blog_bp
     app.register_blueprint(blog_bp)
 
-    from app.main import bp as admin_bp
+    from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
 
     from app.main import bp as main_bp

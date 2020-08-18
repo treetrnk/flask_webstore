@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="mt-5 pt-5">Subscribed!</h1>
+
+<p>Thank you for signing up for our mailing list!</p>
+<p class="mb-5 pb-5">
+<a href="{{ url_for('main.index') }}">
+    <i class="fas fa-chevron-left"></i>
+    Back to the Home page
+  </a>
+</p>
+
+{% endblock %}
