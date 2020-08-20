@@ -221,12 +221,10 @@ def errorlogs():
     return send_from_directory('../logs', 'flask_portal_warnings.log')
 
 @bp.app_errorhandler(404)
-@login_required
 def handle_404(e):
     return render_template("404-error.html", title="Page not found")
 
 @bp.app_errorhandler(500)
-@login_required
 def handle_500(e):
     return render_template("500-error.html", title="Internal Server Error", error=e)
 
@@ -246,6 +244,5 @@ def index():
         )
 
 @bp.route("/<path:path>")
-@login_required
 def error(path):
     return handle_404('Not Found')
