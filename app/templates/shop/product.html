@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>{{ product.name }}</h1>
+  <a href="{{ url_for('shop.index', category=product.category.name) }}" class="float-right">
+    <i class="fas fa-chevron-left"></i>
+    Back to {{ product.category.name }}
+  </a>
+
+  <h1 class="mb-5">{{ product.name }}</h1>
 
   <div class="row">
 
