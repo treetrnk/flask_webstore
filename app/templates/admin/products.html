@@ -15,6 +15,7 @@
     <tr>
       <th>Name</th>
       <th>Image</th>
+      <th>Category</th>
       <th>Barcode</th>
       <th>Description</th>
       <th>Price</th>
@@ -36,6 +37,9 @@
               <img src="{{ url_for('main.uploads', filename=product.image_filename()) }}" class="img-fluid admin-thumbnail" />
             </a>
           {% endif %}
+        </td>
+        <td>
+          {{ product.category.name }}
         </td>
         <td>{{ product.barcode }}</td>
         <td>
