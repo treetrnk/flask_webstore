@@ -235,7 +235,7 @@ def uploads(filename):
 @bp.route("/")
 @bp.route("/home")
 def index():
-    categories = Category.query.all()
+    categories = Category.query.order_by('priority','name').all()
     return render_template('main/index.html', 
             page='home', 
             categories=categories,

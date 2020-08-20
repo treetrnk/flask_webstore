@@ -18,7 +18,7 @@ from app.models import (
 @bp.route('/shop/<string:category>')
 def index(category='all'):
     active = None
-    categories = Category.query.all()
+    categories = Category.query.order_by('priority','name').all()
     products = Product.query
     if category != 'all':
         active = Category.query.filter(Category.name.ilike(category)).first()
