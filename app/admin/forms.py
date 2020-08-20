@@ -25,7 +25,7 @@ class ProductEditForm(FlaskForm):
     name = StringField(f'Name{required}', 
                 validators=[DataRequired(), Length(max=200)])
     barcode = StringField(f'Barcode', validators=[Length(max=50)])
-    image_path = StringField('Image URL') 
+    image = FileField('Image')#, validators=[FileAllowed('image', 'File must be an image.')]) 
     description = TextAreaField('Description', validators=[Length(max=5000)])
     category_id = SelectField('Category', coerce=int, render_kw={'data_type': 'select2'})
     price = FloatField(f'Price', validators=[DataRequired()], 
@@ -44,6 +44,7 @@ class ProductEditForm(FlaskForm):
 
 class CategoryEditForm(FlaskForm):
     name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=100)])
+    image = FileField('Image')#, validators=[FileAllowed('image', 'File must be an image.')]) 
     description = TextAreaField(f'Description{required}', validators=[DataRequired(), Length(max=1000)])
     priority = IntegerField(f'Priority')
 

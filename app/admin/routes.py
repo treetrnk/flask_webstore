@@ -14,6 +14,7 @@ from app.admin.forms import (
         UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
         PageEditForm,
     )
+from app.admin.functions import save_file, delete_file
 from app.models import (
         User, Group, Category, Product, Setting, Page,
     )
@@ -161,6 +162,12 @@ class AddProduct(SaveObjView):
 
     def extra(self):
         self.form.category_id.choices = [[0,'']] + [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
+        self.form.active.data = True 
+
+    def post_post(self):
+        if self.form.image.data:
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
 
 bp.add_url_rule("/admin/product/add", 
         view_func=login_required(AddProduct.as_view('add_product')))
@@ -179,6 +186,13 @@ class EditProduct(SaveObjView):
 
     def extra(self):
         self.form.category_id.choices = [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
+
+    def pre_post(self):
+        if self.form.image.data:
+            delete_file(self.obj.image_path)
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
+
 
 bp.add_url_rule("/admin/product/edit/<int:obj_id>", 
         view_func=login_required(EditProduct.as_view('edit_product')))
@@ -217,6 +231,11 @@ class AddCategory(SaveObjView):
     redirect = {'endpoint': 'admin.categories'}
     context = {'tab': 'categories'}
 
+    def pre_post(self):
+        if self.form.image.data:
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
+
 bp.add_url_rule("/admin/category/add", 
         view_func=login_required(AddCategory.as_view('add_category')))
 
@@ -231,6 +250,12 @@ class EditCategory(SaveObjView):
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.categories'}
     context = {'tab': 'categories'}
+
+    def pre_post(self):
+        if self.form.image.data:
+            delete_file(self.obj.image_path)
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
 
 bp.add_url_rule("/admin/category/edit/<int:obj_id>", 
         view_func=login_required(EditCategory.as_view('edit_category')))

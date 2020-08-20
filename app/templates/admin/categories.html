@@ -14,6 +14,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Image</th>
       <th>Description</th>
       <th>Priority</th>
     </tr>
@@ -26,6 +27,13 @@
             <i class="fas fa-edit"></i>
             {{ category.name }}
           </a>
+        </td>
+        <td>
+          {% if category.image_path %}
+            <a href="{{ url_for('main.uploads', filename=category.image_filename()) }}" target='category'>
+              <img src="{{ url_for('main.uploads', filename=category.image_filename()) }}" class="img-fluid admin-thumbnail" />
+            </a>
+          {% endif %}
         </td>
         <td>{{ category.description[0:100] }}...</td>
         <td>{{ category.priority }}</td>

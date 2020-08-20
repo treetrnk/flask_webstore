@@ -190,9 +190,13 @@ class Comment(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
+    image_path = db.Column(db.String(1000))
     description = db.Column(db.String(1000))
     priority = db.Column(db.Integer)
 
+    def image_filename(self):
+        if self.image_path:
+            return self.image_path.split('/')[-1]
 
     def __repr__(self):
         return f'Category({self.id}, {self.name})'
@@ -234,6 +238,10 @@ class Product(db.Model):
     
     def logs_link(self):
         return url_for('main.view_log', folder='product', log_name=self.log_filename())
+
+    def image_filename(self):
+        if self.image_path:
+            return self.image_path.split('/')[-1]
 
     def export_inventory(active_only=True):
         data = [[
