@@ -197,6 +197,7 @@ class Category(db.Model):
     def image_filename(self):
         if self.image_path:
             return self.image_path.split('/')[-1]
+        return ''
 
     def active_products(self):
         return Product.query.filter_by(category_id=self.id, active=True).order_by('name').all()
@@ -245,6 +246,7 @@ class Product(db.Model):
     def image_filename(self):
         if self.image_path:
             return self.image_path.split('/')[-1]
+        return ''
 
     def export_inventory(active_only=True):
         data = [[
