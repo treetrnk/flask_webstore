@@ -6,152 +6,21 @@
   Products
 </h4>
 
-<div class="row">
-  <div class="col-12 col-sm-6 col-md">
-    <div class="product-square" style="background-image: url({{ url_for('static', filename='images/products/microgreens.jpg') }})" data-toggle="collapse" data-target="#microgreens">
-      <p>Microgreens</p>
-    </div>
-  </div>
+  <div class="row mb-5">
 
-  <div class="col-12 col-sm-6 col-md">
-    <div class="product-square" style="background-image: url({{ url_for('static', filename='images/products/eggs.jpg') }})" data-toggle="collapse" data-target="#eggs">
-      <p>Eggs</p>
-    </div>
-  </div>
+    {% for category in categories %}
+      {% if category.active_products() %}
+        <div class="col-md col-12">
+          <a href="{{ url_for('shop.index', category=category.name.lower()) }}">
+            <div class="product-square" style="background-image: url({{ url_for('main.uploads', filename=category.image_filename()) }})">
+              <p>{{ category.name }}</p>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+    {% endfor %}
 
-  <div class="col-12 col-sm-6 col-md">
-    <div class="product-square" style="background-image: url({{ url_for('static', filename='images/products/houseplants.jpg') }})" data-toggle="collapse" data-target="#houseplants">
-      <p>Houseplants</p>
-    </div>
   </div>
-
-  <div class="col-12 col-sm-6 col-md">
-    <div class="product-square" style="background-image: url({{ url_for('static', filename='images/products/terrariums.jpg') }})" data-toggle="collapse" data-target="#terrariums">
-      <p>Terrariums</p>
-    </div>
-  </div>
-</div>
-
-<div class="accordian">
-<div class="product-descriptions">
-  <div class="collapse product-description" id="microgreens">
-    <hr />
-    <h4>Microgreens</h4>
-    <p>
-      Microgreens are vegetables and herbs that are harvested while still in the seedling stage. 
-      At that point, they can have up 40 times the nutrients of the mature plant and are loaded 
-      with antioxidants and other beneficial nutrients.
-    </p>
-    <p>
-      Microgreens can generally be used in dishes instead of the mature plant. They also make a great garnish, are good in salads, and add a pop of flavor, texture, and color to any dish.
-    </p>
-    <p>
-      Currently, we offer the following varieties of microgreens:
-      <ul>
-        <li>
-          <b>Broccoli</b> - Broccoli microgreens are tender and have a muted broccoli flavor.
-        </li>
-        <li>
-          <b>Pea</b> - Sweet and stringy. These greens produce tendrils, making them visually appealing as well as delicious.
-        </li>
-        <li>
-          <b>Radish</b> - Spicy and colorful, just like the mature form. This makes a great accent to any dish. They can also be used in salads or anywhere else you would use radishes.
-        </li>
-        <li>
-          <b>Sunflower</b> - These microgreens are crunchy and provide a nutty flavor. These even go great on peanut butter and jelly sandwhiches!
-        </li>
-      </ul>
-    </p>
-  </div>
-  <div class="collapse product-description" id="eggs">
-    <hr />
-    <h4>Eggs</h4>
-    <p>
-      Quail eggs are a delicious nutrient-rich egg that comes in a small package. We collect them daily from our small backyard flock. These taste just like chicken eggs and you can use four of them in place of a large chicken egg in recipes.
-    </p>
-  </div>
-  <div class="collapse product-description" id="houseplants">
-    <hr />
-    <h4>Houseplants</h4>
-    <p>
-      Houseplants can help reduce stress and liven up your living space. We have a range of houseplants from vining plants to herbs, but we do have limited stock. Please contact us for details on what we have available at the moment.
-    </p>
-    <p>
-      Here are the plants we typically carry:
-      <ul>
-        <li>
-          <b>Pothos</b> - A vining plant that handles low-light well. We have the following varieties.
-          <ul>
-            <li>
-              <b>Golden</b> - A varegated variety displaying golden streaks across its foliage.
-            </li>
-            <li>
-              <b>Marble</b> - A varegated variety displaying pale white and green speckling.
-            </li>
-            <li>
-              <b>Jade</b> - The classic dark green vining plant.
-            </li>
-          </ul>
-        </li>
-        <li>
-          <b>Spider Plant</b> - Spider plants are a tropical grass that produces offspring via hangning plant babies, making it look like a spider. This plant is great in hanging baskets or on shelf or plant stand.
-        </li>
-        <li>
-          <b>Flaming Katy</b> - A beautiful succulent plant that produces bright red flowers when given enough light.
-        </li>
-        <li>
-          <b>English Ivy</b> - A beautiful low light sprawling ivy. This is another great plant for hanging baskets.
-        </li>
-        <li>
-          <b>Herbs</b> - We usually have plenty of herbs that make great indoor houseplants as well. We reccomend keeping these ones near the kitchen for visual appeal and fresh seasoning.
-            <ul>
-              <li>
-                <b>Peppermint</b>
-              </li>
-              <li>
-                <b>Spearmint</b>
-              </li>
-              <li>
-                <b>Apple Mint (Fuzzy Mint)</b>
-              </li>
-              <li>
-                <b>Chocolate Mint</b>
-              </li>
-              <li>
-                <b>Lemon Balm</b>
-              </li>
-              <li>
-                <b>Rosemary</b>
-              </li>
-              <li>
-                <b>Oregano</b>
-              </li>
-              <li>
-                <b>Sage</b>
-              </li>
-              <li>
-                <b>Thyme</b>
-              </li>
-              <li>
-                <b>Basil</b>
-              </li>
-              <li>
-                <b>Lemon Basil</b>
-              </li>
-            </ul>
-        </li>
-      </ul>
-    </p>
-  </div>
-  <div class="collapse product-description" id="terrariums">
-    <hr />
-    <h4>Terrariums</h4>
-    <p>
-      Terrariums are nature in a bottle. Inside of each terrariums is a self contained ecosystem, with plants, a water-cycle, and even small organisms that clean up the waste. All of our terrariums are hand-crafted and one of a kind. They are built inside of recycled containers (mostly whiskey and rum bottles).
-    </p>
-  </div>
-</div>
-</div>
 
 <br />
 <br />

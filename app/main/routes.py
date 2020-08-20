@@ -14,7 +14,7 @@ from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.models import (
-    User
+    User, Category,
 )
 
 @bp.route("/subscribe", methods=['GET', 'POST'])
@@ -237,8 +237,10 @@ def uploads(filename):
 @bp.route("/")
 @bp.route("/home")
 def index():
+    categories = Category.query.all()
     return render_template('main/index.html', 
             page='home', 
+            categories=categories,
             css='home',
             js='home.js',
         )

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h1 class="text-center">Shop</h1>
+
+  <hr class="my-5" /> 
+  
+  <h4>Categories</h4>
+  <div class="row">
+
+      <div class="col-md col-12">
+        <a href="{{ url_for('shop.index') }}">
+          <div class="product-square {% if active == None %}active{% endif %}" style="background-color: #aade87;">
+            <p>All</p>
+          </div>
+        </a>
+      </div>
+
+    {% for category in categories %}
+      {% if category.active_products() %}
+        <div class="col-md col-12">
+          <a href="{{ url_for('shop.index', category=category.name.lower()) }}">
+            <div class="product-square {% if active and active.name.lower() == category.name.lower() %}active{% endif %}" style="background-image: url({{ url_for('main.uploads', filename=category.image_filename()) }})">
+              <p>{{ category.name }}</p>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+  {% if active %}
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-12 col-12">
+        <p>
+          {{ active.description }}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="my-4" /> 
+
+  <h4>Products</h4>
+  <div class="row justify-content-center">
+    {% for product in products %}
+    
+      <div class="col-md-3 col-6">
+        {% include 'shop/product-card.html' %}
+      </div>
+
+    {% endfor %}
+  </div>
+
+{% endblock %}

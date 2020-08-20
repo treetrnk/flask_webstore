@@ -198,6 +198,9 @@ class Category(db.Model):
         if self.image_path:
             return self.image_path.split('/')[-1]
 
+    def active_products(self):
+        return Product.query.filter_by(category_id=self.id, active=True).order_by('name').all()
+
     def __repr__(self):
         return f'Category({self.id}, {self.name})'
 

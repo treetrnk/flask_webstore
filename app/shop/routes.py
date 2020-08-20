@@ -10,6 +10,31 @@ from datetime import datetime
 from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
-#from app.models import (
-#    )
+from app.models import (
+        Product, Category
+    )
 
+@bp.route('/shop')
+@bp.route('/shop/<string:category>')
+def index(category='all'):
+    active = None
+    categories = Category.query.all()
+    products = Product.query
+    if category != 'all':
+        active = Category.query.filter(Category.name.ilike(category)).first()
+        products = products.filter(Product.category.has(Category.name == category))
+    products = products.order_by('name').all()
+
+    return render_template('shop/index.html',
+            active=active,
+            categories=categories,
+            products=products,
+        )
+
+@bp.route('/shop/<int:obj_id>')
+@bp.route('/shop/<int:obj_id>/<string:product_slug>')
+def product(obj_id, product_slug=''):
+    product = Product.query.filter_by(id=obj_id,active=True).first()
+    return render_template('shop/product.html',
+            product=product,
+        )

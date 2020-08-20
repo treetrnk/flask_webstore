@@ -1,0 +1,13 @@
+<div class="card">
+  <div class="card-body">
+    
+    <a href="{{ url_for('shop.product', obj_id=product.id) }}">
+      <img src="{{ url_for('main.uploads', filename=product.image_filename()) }}" class="img-fluid" />
+      <h4>{{ product.name }}</h4>
+    </a>
+    <p class="text-center">
+      ${{ product.price }}
+    </p>
+
+  </div>
+</div>
