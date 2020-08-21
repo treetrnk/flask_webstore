@@ -99,6 +99,21 @@ a.no-underline, a.no-underline:hover {
   background: none;
   border: 3px solid #aade87;
 }
+.product-card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat:no-repeat;
+  transition: background-size;
+  transition: transform 0.5s ease;
+  -moz-transition: background-size 1s ease;
+  -ms-transition: background-size 1s ease;
+  -o-transition: background-size 1s ease;
+  -webkit-transition: background-size 1s ease;
+}
+.product-card-image:hover {
+  background-size: 175%;
+}
 .bg-purple {
 	background-color: #a500ff;
 }
