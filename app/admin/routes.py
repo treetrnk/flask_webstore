@@ -358,7 +358,7 @@ class EditSetting(SaveObjView):
     success_msg = 'Setting updated.'
     delete_endpoint = 'admin.delete_setting'
     template = 'admin/object-edit.html'
-    redirect = {'endpoint': 'admin.setting'}
+    redirect = {'endpoint': 'admin.settings'}
     context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/setting/edit/<int:obj_id>", 
