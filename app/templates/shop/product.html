@@ -36,15 +36,24 @@
           {{ product.category.html_description()|safe }}
         </p>
       {% endif %}
-      <h4 class="text-center text-dark mt-5">
+      <h4 class="text-center text-dark my-4">
         ${{ product.price }}
       </h4>
 
-      <p class="mt-5 alert alert-info">
-        <i class="fas fa-exclamation-triangle"></i>
-        <b>Website Orders:</b>
-        We cannot proccess online orders at the moment. If you would like to order this product, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
-      </p>
+      {% if product.is_sold_out() %}
+        {{ product.sold_out()|safe }}
+      {% else %}
+        
+        <p class="text-muted">
+          In Stock: {{ product.available }}
+        </p>
+
+        <p class="alert alert-info">
+          <i class="fas fa-exclamation-triangle"></i>
+          <b>Website Orders:</b>
+          We cannot proccess online orders at the moment. If you would like to order this product, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
+        </p>
+      {% endif %}
 
     </div>
 

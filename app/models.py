@@ -258,6 +258,14 @@ class Product(db.Model):
             return markdown(self.description)
         return ''
 
+    def is_sold_out(self):
+        return True if self.available < 1 else False
+
+    def sold_out(self):
+        if self.is_sold_out():
+            return '<p class="text-center"><span class="border border-dark px-2">SOLD OUT</span></p>'
+        return ''
+
     def export_inventory(active_only=True):
         data = [[
                 'ID',
