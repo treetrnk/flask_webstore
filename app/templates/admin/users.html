@@ -14,18 +14,34 @@
   <thead>
     <tr>
       <th>Email</th>
-      <th>Password</th>
-      <th>Subscribed</th>
+      <th>Name</th>
+      <th>Groups</th>
+      <th width="100">Subscribed</th>
     </tr>
   </thead>
   <tbody>
     {% for user in users %}
       <tr>
-        <td>{{ user.email }}</td>
-        <td class="text-center">
-          {% if user.password != None %}<i class="fas fa-check-circle text-success"></i>{% endif %}
+        <td>
+          <a href="{{ url_for('admin.edit_user', obj_id=user.id) }}">
+            <i class="fas fa-edit"></i>
+            {{ user.email }}
+          </a>
         </td>
-        <td>{{ user.subscribed }}</td>
+        <td>
+          {{ user.first_name if user.first_name else '' }}
+          {{ user.last_name if user.last_name else '' }}
+        </td>
+        <td>
+          {% for group in user.groups %}
+            <span class="badge badge-{{ group.style }}">
+              {{ group.name }}
+            </span>
+          {% endfor %}
+        </td>
+        <td class="text-center">
+          {% if user.subscribed %}<i class="fas fa-check-circle text-success"></i>{% endif %}
+        </td>
       </tr>
     {% endfor %}
   </tbody>

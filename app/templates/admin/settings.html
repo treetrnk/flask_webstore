@@ -21,7 +21,10 @@
     {% for setting in settings %}
       <tr>
         <td>
-          {{ setting.name }}
+          <a href="{{ url_for('admin.edit_setting', obj_id=setting.id) }}">
+            <i class="fas fa-edit"></i>
+            {{ setting.name }}
+          </a>
         </td>
         <td>
           {{ setting.value }}

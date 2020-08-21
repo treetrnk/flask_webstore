@@ -5,12 +5,26 @@ from wtforms import (
         IntegerField, SelectMultipleField, FieldList, FormField, FloatField,
         BooleanField
     )
-from wtforms.validators import DataRequired, Length, Optional, InputRequired
+from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
+from wtforms.validators import DataRequired, Length, Optional, InputRequired, Email
+from app.models import Group
 
 required = " <span class='text-danger'>*</span>"
 
+def all_groups():
+    return Group.query.order_by('name').all()
+
 class UserEditForm(FlaskForm):
-    pass
+    email = StringField(f'Email{required}', validators=[DataRequired(), Email(), Length(max=120)])
+    username = StringField('Username', validators=[Length(max=20)])
+    first_name = StringField('First Name', validators=[Length(max=50)])
+    last_name = StringField('Last Name', validators=[Length(max=50)])
+    groups = QuerySelectMultipleField('Groups', query_factory=all_groups, allow_blank=True, 
+            render_kw={'data-type': 'select2'})
+    company = StringField('Company', validators=[Length(max=100)])
+    phone = StringField('Phone Number', validators=[Length(max=12)])
+    subscribed = BooleanField('Subscribed?')
+
 
 class GroupEditForm(FlaskForm):
     name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=75)])

@@ -56,7 +56,7 @@ bp.add_url_rule("/admin/user/add",
 class EditUser(SaveObjView):
     title = "Edit User"
     model = User
-    form = SettingEditForm
+    form = UserEditForm
     action = 'Edit'
     log_msg = 'updated a user'
     success_msg = 'User updated.'
