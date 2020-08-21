@@ -91,7 +91,7 @@
 			</div>
 		{% endif %}
 
-    {% if page == 'home' %}
+    {% if page and page.slug == 'home' %}
       <div class="jumbotron">
         <center>
           <br />
@@ -116,7 +116,7 @@
 			<div class="row">
 				<div class="col">
 
-          {% if page != 'home' %}
+          {% if (page and page.name != 'home') or not page %}
             {% include 'alert.html' %}
           {% endif %}
 

@@ -14,7 +14,7 @@ from app.functions import log_new, log_change, settings_dict
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.models import (
-    User, Category, Setting,
+    User, Category, Setting, Page,
 )
 
 @bp.route("/subscribe", methods=['GET', 'POST'])
@@ -238,8 +238,9 @@ def index():
     categories = Category.query.order_by('priority','name').all()
     settings = Setting.query.all()
     settings = settings_dict(settings)
+    page = Page.query.filter_by(slug='home').first()
     return render_template('main/index.html', 
-            page='home', 
+            page=page, 
             categories=categories,
             settings=settings,
             css='home',

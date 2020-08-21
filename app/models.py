@@ -323,6 +323,7 @@ class Page(db.Model):
     title = db.Column(db.String(200), unique=True, nullable=False)
     slug = db.Column(db.String(200), unique=True, nullable=False)
     body = db.Column(db.String(5000))
+    top_nav = db.Column(db.Boolean)
     priority = db.Column(db.Integer)
     active = db.Column(db.Boolean, default=True)
 

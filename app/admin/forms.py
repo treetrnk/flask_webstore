@@ -63,7 +63,12 @@ class CategoryEditForm(FlaskForm):
     priority = IntegerField(f'Priority')
 
 class PageEditForm(FlaskForm):
-    pass
+    title = StringField(f'Title{required}', validators=[DataRequired(), Length(max=200)])
+    slug = StringField(f'Slug{required}', validators=[DataRequired(), Length(max=200)])
+    body = TextAreaField(f'Body{required}', validators=[DataRequired(), Length(max=5000)])
+    priority = IntegerField('Priority', validators=[Optional()])
+    top_nav = BooleanField('In Navigation?')
+    active = BooleanField('Active?')
 
 class CommentForm(FlaskForm):
     user_id = HiddenField('User')
