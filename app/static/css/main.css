@@ -68,12 +68,15 @@ h1,h2,h3,h4,h5,h6 {
 .admin-thumbnail {
   max-width: 100px;
 }
+a.no-underline, a.no-underline:hover {
+  text-decoration: none !important;
+}
 .product-square {
-  min-height: 150px;
+  min-height: 12vh;
   cursor: pointer;
   display: block;
   text-align: center;
-  line-height: 150px;
+  line-height: 12vh;
   background-size: cover;
   background-position: center center;
   border-radius: 10px;
@@ -94,7 +97,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 .product-square.active p {
   background: none;
-  border: 1px solid #87AADE;
+  border: 3px solid #aade87;
 }
 .bg-purple {
 	background-color: #a500ff;

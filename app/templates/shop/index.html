@@ -3,14 +3,14 @@
 
   <h1 class="text-center">Shop</h1>
 
-  <hr class="my-5" /> 
+  <hr class="my-4" /> 
   
   <h4>Categories</h4>
   <div class="row">
 
       <div class="col-md-2 col-12">
-        <a href="{{ url_for('shop.index') }}">
-          <div class="product-square {% if active == None %}active{% endif %}" style="background-color: #aade87;">
+        <a href="{{ url_for('shop.index') }}" class="no-underline">
+          <div class="product-square {% if active == None %}active{% endif %}" style="background-color: #C8B7B7;">
             <p>All</p>
           </div>
         </a>
@@ -19,7 +19,7 @@
     {% for category in categories %}
       {% if category.active_products() %}
         <div class="col-md col-12">
-          <a href="{{ url_for('shop.index', category=category.name.lower()) }}">
+          <a href="{{ url_for('shop.index', category=category.name.lower()) }}" class="no-underline">
             <div class="product-square {% if active and active.name.lower() == category.name.lower() %}active{% endif %}" style="background-image: url({{ url_for('main.uploads', filename=category.image_filename()) }})">
               <p>{{ category.name }}</p>
             </div>
@@ -31,7 +31,7 @@
   </div>
 
   {% if active %}
-    <div class="row justify-content-center mt-4">
+    <div class="row justify-content-center mt-4 d-none d-md-block">
       <div class="col-md-12 col-12">
         <p>
           {{ active.description }}
@@ -46,7 +46,7 @@
   <div class="row justify-content-center">
     {% for product in products %}
     
-      <div class="col-md-3 col-6">
+      <div class="col-md-3 col-12">
         {% include 'shop/product-card.html' %}
       </div>
 
