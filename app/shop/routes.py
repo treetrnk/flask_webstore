@@ -32,8 +32,8 @@ def index(category='all'):
         )
 
 @bp.route('/shop/<int:obj_id>')
-@bp.route('/shop/<int:obj_id>/<string:product_slug>')
-def product(obj_id, product_slug=''):
+@bp.route('/shop/<int:obj_id>/<string:slug>')
+def product(obj_id, slug=''):
     product = Product.query.filter_by(id=obj_id,active=True).first()
     return render_template('shop/product.html',
             product=product,

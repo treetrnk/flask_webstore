@@ -1,13 +1,13 @@
 <div class="card shadow">
 
-  <a href="{{ url_for('shop.product', obj_id=product.id) }}" class="no-underline">
+  <a href="{{ url_for('shop.product', obj_id=product.id, slug=product.slugify()) }}" class="no-underline">
     <div class="product-card-image" style="background-image: url('{{ url_for('main.uploads', filename=product.image_filename()) }}')" />
       <p>&nbsp;</p>
     </div>
   </a>
 
   <div class="card-body">
-    <a href="{{ url_for('shop.product', obj_id=product.id) }}">
+    <a href="{{ url_for('shop.product', obj_id=product.id, slug=product.slugify()) }}">
       <h5>{{ product.name }}</h5>
     </a>
     
