@@ -59,7 +59,7 @@ class ProductEditForm(FlaskForm):
 class CategoryEditForm(FlaskForm):
     name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=100)])
     image = FileField('Image')#, validators=[FileAllowed('image', 'File must be an image.')]) 
-    description = TextAreaField(f'Description{required}', validators=[DataRequired(), Length(max=1000)])
+    description = TextAreaField(f'Description', validators=[Length(max=1000)])
     priority = IntegerField(f'Priority')
 
 class PageEditForm(FlaskForm):

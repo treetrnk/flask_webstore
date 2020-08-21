@@ -29,15 +29,20 @@
 
     <div class="col">
       <p>
-        {{ product.description }}
+        {{ product.html_description()|safe }}
       </p>
-      <h4 class="text-center">
+      {% if product.category.html_description()|safe %}
+        <p>
+          {{ product.category.html_description()|safe }}
+        </p>
+      {% endif %}
+      <h4 class="text-center text-dark mt-5">
         ${{ product.price }}
       </h4>
 
       <p class="mt-5 alert alert-info">
         <i class="fas fa-exclamation-triangle"></i>
-        <b>Note:</b>
+        <b>Website Orders:</b>
         We cannot proccess online orders at the moment. If you would like to order this product, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
       </p>
 

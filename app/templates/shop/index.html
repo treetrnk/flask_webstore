@@ -30,12 +30,10 @@
 
   </div>
 
-  {% if active %}
+  {% if active and active.description %}
     <div class="row justify-content-center mt-4 d-none d-md-block">
       <div class="col-md-12 col-12">
-        <p>
-          {{ active.description }}
-        </p>
+        {{ active.html_description()|safe }}
       </div>
     </div>
   {% endif %}
@@ -46,7 +44,7 @@
   <div class="row justify-content-center">
     {% for product in products %}
     
-      <div class="col-md-3 col-12 mb-3">
+      <div class="col-md-3 col-12 mb-4">
         {% include 'shop/product-card.html' %}
       </div>
 

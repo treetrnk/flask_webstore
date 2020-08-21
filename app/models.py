@@ -199,6 +199,11 @@ class Category(db.Model):
             return self.image_path.split('/')[-1]
         return ''
 
+    def html_description(self):
+        if self.description:
+            return markdown(self.description)
+        return ''
+
     def active_products(self):
         return Product.query.filter_by(category_id=self.id, active=True).order_by('name').all()
 
@@ -246,6 +251,11 @@ class Product(db.Model):
     def image_filename(self):
         if self.image_path:
             return self.image_path.split('/')[-1]
+        return ''
+
+    def html_description(self):
+        if self.description:
+            return markdown(self.description)
         return ''
 
     def export_inventory(active_only=True):
@@ -315,6 +325,11 @@ class Page(db.Model):
     body = db.Column(db.String(5000))
     priority = db.Column(db.Integer)
     active = db.Column(db.Boolean, default=True)
+
+    def html_body(self):
+        if self.body:
+            return markdown(self.body)
+        return ''
 
     def __repr__(self):
         return f'Page({self.id}, {self.title})'
