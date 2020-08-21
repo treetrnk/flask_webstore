@@ -30,7 +30,7 @@ def index():
 ##########
 
 @bp.route('/admin/users')
-@login_required
+@group_required('admin')
 def users():
     users = User.query.order_by('email')
     return render_template('admin/users.html', 
@@ -51,7 +51,7 @@ class AddUser(SaveObjView):
     context = {'tab': 'users'}
 
 bp.add_url_rule("/admin/user/add", 
-        view_func=login_required(AddUser.as_view('add_user')))
+        view_func=group_required('admin')(AddUser.as_view('add_user')))
 
 class EditUser(SaveObjView):
     title = "Edit User"
@@ -66,7 +66,7 @@ class EditUser(SaveObjView):
     context = {'tab': 'users'}
 
 bp.add_url_rule("/admin/user/edit/<int:obj_id>", 
-        view_func=login_required(EditUser.as_view('edit_user')))
+        view_func=group_required('admin')(EditUser.as_view('edit_user')))
 
 class DeleteUser(DeleteObjView):
     model = User
@@ -75,14 +75,14 @@ class DeleteUser(DeleteObjView):
     redirect = {'endpoint': 'admin.users'}
 
 bp.add_url_rule("/admin/user/delete", 
-        view_func = login_required(DeleteUser.as_view('delete_user')))
+        view_func = group_required('admin')(DeleteUser.as_view('delete_user')))
 
 ###########
 ## GROUP ################################################################
 ###########
 
 @bp.route('/admin/groups')
-@login_required
+@group_required('admin')
 def groups():
     groups = Group.query.order_by('name')
     return render_template('admin/groups.html', 
@@ -106,7 +106,7 @@ class AddGroup(SaveObjView):
         self.form.style.choices = Group.STYLE_CHOICES
 
 bp.add_url_rule("/admin/group/add", 
-        view_func=login_required(AddGroup.as_view('add_group')))
+        view_func=group_required('admin')(AddGroup.as_view('add_group')))
 
 class EditGroup(SaveObjView):
     title = "Edit Group"
@@ -124,7 +124,7 @@ class EditGroup(SaveObjView):
         self.form.style.choices = Group.STYLE_CHOICES
 
 bp.add_url_rule("/admin/group/edit/<int:obj_id>", 
-        view_func=login_required(EditGroup.as_view('edit_group')))
+        view_func=group_required('admin')(EditGroup.as_view('edit_group')))
 
 class DeleteGroup(DeleteObjView):
     model = Group
@@ -133,14 +133,14 @@ class DeleteGroup(DeleteObjView):
     redirect = {'endpoint': 'admin.groups'}
 
 bp.add_url_rule("/admin/group/delete", 
-        view_func = login_required(DeleteGroup.as_view('delete_group')))
+        view_func = group_required('admin')(DeleteGroup.as_view('delete_group')))
 
 ##############
 ## PRODUCT ################################################################
 ##############
 
 @bp.route('/admin/products')
-@login_required
+@group_required('admin')
 def products():
     products = Product.query.order_by('name')
     return render_template('admin/products.html', 
@@ -170,7 +170,7 @@ class AddProduct(SaveObjView):
             self.obj.image_path = path
 
 bp.add_url_rule("/admin/product/add", 
-        view_func=login_required(AddProduct.as_view('add_product')))
+        view_func=group_required('admin')(AddProduct.as_view('add_product')))
 
 class EditProduct(SaveObjView):
     title = "Edit Product"
@@ -195,7 +195,7 @@ class EditProduct(SaveObjView):
 
 
 bp.add_url_rule("/admin/product/edit/<int:obj_id>", 
-        view_func=login_required(EditProduct.as_view('edit_product')))
+        view_func=group_required('admin')(EditProduct.as_view('edit_product')))
 
 class DeleteProduct(DeleteObjView):
     model = Product
@@ -204,14 +204,14 @@ class DeleteProduct(DeleteObjView):
     redirect = {'endpoint': 'admin.products'}
 
 bp.add_url_rule("/admin/product/delete", 
-        view_func = login_required(DeleteProduct.as_view('delete_product')))
+        view_func = group_required('admin')(DeleteProduct.as_view('delete_product')))
 
 ##############
 ## CATEGORY ################################################################
 ##############
 
 @bp.route('/admin/categories')
-@login_required
+@group_required('admin')
 def categories():
     categories = Category.query.order_by('name')
     return render_template('admin/categories.html', 
@@ -237,7 +237,7 @@ class AddCategory(SaveObjView):
             self.obj.image_path = path
 
 bp.add_url_rule("/admin/category/add", 
-        view_func=login_required(AddCategory.as_view('add_category')))
+        view_func=group_required('admin')(AddCategory.as_view('add_category')))
 
 class EditCategory(SaveObjView):
     title = "Edit Category"
@@ -258,7 +258,7 @@ class EditCategory(SaveObjView):
             self.obj.image_path = path
 
 bp.add_url_rule("/admin/category/edit/<int:obj_id>", 
-        view_func=login_required(EditCategory.as_view('edit_category')))
+        view_func=group_required('admin')(EditCategory.as_view('edit_category')))
 
 class DeleteCategory(DeleteObjView):
     model = Category
@@ -267,14 +267,14 @@ class DeleteCategory(DeleteObjView):
     redirect = {'endpoint': 'admin.categories'}
 
 bp.add_url_rule("/admin/category/delete", 
-        view_func = login_required(DeleteCategory.as_view('delete_category')))
+        view_func = group_required('admin')(DeleteCategory.as_view('delete_category')))
 
 ##########
 ## PAGE ################################################################
 ##########
 
 @bp.route('/admin/pages')
-@login_required
+@group_required('admin')
 def pages():
     pages = Page.query.order_by('title')
     return render_template('admin/pages.html', 
@@ -295,7 +295,7 @@ class AddPage(SaveObjView):
     context = {'tab': 'pages'}
 
 bp.add_url_rule("/admin/page/add", 
-        view_func=login_required(AddPage.as_view('add_page')))
+        view_func=group_required('admin')(AddPage.as_view('add_page')))
 
 class EditPage(SaveObjView):
     title = "Edit Page"
@@ -310,7 +310,7 @@ class EditPage(SaveObjView):
     context = {'tab': 'pages'}
 
 bp.add_url_rule("/admin/page/edit/<int:obj_id>", 
-        view_func=login_required(EditPage.as_view('edit_page')))
+        view_func=group_required('admin')(EditPage.as_view('edit_page')))
 
 class DeletePage(DeleteObjView):
     model = Page
@@ -319,14 +319,14 @@ class DeletePage(DeleteObjView):
     redirect = {'endpoint': 'admin.pages'}
 
 bp.add_url_rule("/admin/page/delete", 
-        view_func = login_required(DeletePage.as_view('delete_page')))
+        view_func = group_required('admin')(DeletePage.as_view('delete_page')))
 
 ##############
 ## SETTING ################################################################
 ##############
 
 @bp.route('/admin/settings')
-@login_required
+@group_required('admin')
 def settings():
     settings = Setting.query.order_by('name')
     return render_template('admin/settings.html', 
@@ -347,7 +347,7 @@ class AddSetting(SaveObjView):
     context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/setting/add", 
-        view_func=login_required(AddSetting.as_view('add_setting')))
+        view_func=group_required('admin')(AddSetting.as_view('add_setting')))
 
 class EditSetting(SaveObjView):
     title = "Edit Setting"
@@ -362,7 +362,7 @@ class EditSetting(SaveObjView):
     context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/setting/edit/<int:obj_id>", 
-        view_func=login_required(EditSetting.as_view('edit_setting')))
+        view_func=group_required('admin')(EditSetting.as_view('edit_setting')))
 
 class DeleteSetting(DeleteObjView):
     model = Setting
@@ -371,5 +371,5 @@ class DeleteSetting(DeleteObjView):
     redirect = {'endpoint': 'admin.settings'}
 
 bp.add_url_rule("/admin/setting/delete", 
-        view_func = login_required(DeleteSetting.as_view('delete_setting')))
+        view_func = group_required('admin')(DeleteSetting.as_view('delete_setting')))
 
