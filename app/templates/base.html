@@ -87,9 +87,17 @@
       <div class="jumbotron">
         <center>
           <br />
-          <h1 class="display-4">Microgreens and more!</h1>
+          <h1 class="display-4">
+            {% if settings.get('home-banner-header') %}
+              {{ settings.get('home-banner-header') }}
+            {% else %}
+              Welcome to {{ config.get('COMPANY_NAME') }}
+            {% endif %}
+          </h1>
           <p>
-            Here at Little Hare Homestead, we strive to provide you with the healthiest and tastiest products.
+            {% if settings.get('home-banner-text') %}
+              {{ settings.get('home-banner-text') }}
+            {% endif %}
           </p>
           <br />
         </center>

@@ -64,6 +64,12 @@ def convert_to_dict(obj):
         return data
     return obj
 
+def settings_dict(settings_query):
+    output = {}
+    for setting in settings_query:
+        output[setting.name] = setting.value
+    return output
+
 def create_file_if_missing(filepath):
     if not os.path.isfile(filepath):
         open(filepath, 'w')

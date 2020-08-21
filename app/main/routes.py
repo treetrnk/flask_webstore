@@ -10,11 +10,11 @@ from app.main.forms import (
     )
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from app.functions import log_new, log_change
+from app.functions import log_new, log_change, settings_dict
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.models import (
-    User, Category,
+    User, Category, Setting,
 )
 
 @bp.route("/subscribe", methods=['GET', 'POST'])
@@ -236,9 +236,12 @@ def uploads(filename):
 @bp.route("/home")
 def index():
     categories = Category.query.order_by('priority','name').all()
+    settings = Setting.query.all()
+    settings = settings_dict(settings)
     return render_template('main/index.html', 
             page='home', 
             categories=categories,
+            settings=settings,
             css='home',
             js='home.js',
         )
