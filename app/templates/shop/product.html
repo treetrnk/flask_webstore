@@ -44,9 +44,29 @@
         {{ product.sold_out()|safe }}
       {% else %}
         
-        <p class="text-muted">
-          In Stock: {{ product.available }}
+        <p class="text-muted text-right">
+          In Stock: {{ product.available }} <br />
         </p>
+
+        <div class="row mb-2">
+          <div class="col-md-5 col-10 ml-auto">
+            
+
+            <form action="" method="post">
+              <div class="input-group">
+                <input type='hidden' name='product_id' value='{{ product.id }}' />
+                <input type='number' max="{{ product.available }}" min="1" name="amount" value="1" class="form-control" />
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-primary disabled jquery-tooltip" title="Feature coming soon!" disabled>
+                    <i class="fas fa-shopping-cart"></i>
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
 
         <p class="alert alert-info">
           <i class="fas fa-exclamation-triangle"></i>

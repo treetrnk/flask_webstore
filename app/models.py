@@ -322,6 +322,29 @@ class Product(db.Model):
     def __str__(self):
         return f'{self.name} ({self.barcode})'
 
+#############
+## ORDER #####################################################################
+#############
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(100), default='Incomplete')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=backref('orders', order_by='Order.created.desc()'), lazy=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
+
+#############
+## ITEM #####################################################################
+#############
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey(f'order.id'), nullable=False)
+    order = db.relationship('Order', backref=backref('items', order_by='Item.created'), lazy=True)
+    product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=False)
+    product = db.relationship('Product', backref=backref('items', order_by='Item.created.desc()'), lazy=True)
+    amount = db.Column(db.Integer, default=1, nullable=False)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
 #############
 ## PAGE #####################################################################

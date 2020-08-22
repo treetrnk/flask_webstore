@@ -6,7 +6,7 @@ from app import db
 from flask_login import login_required, current_user
 #from app.auth.authenticators import permission_required, user_permission_required
 from app.main.forms import (
-        DeleteCommentForm, SubscribeForm,
+        DeleteCommentForm, SubscribeForm
     )
 from werkzeug.utils import secure_filename
 from datetime import datetime
