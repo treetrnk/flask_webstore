@@ -20,6 +20,8 @@ class Config(object):
                 'sqlite:///' + os.path.join(datadir, 'shared_app.db')
         }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_RECYCLE = os.environ.get('SQLALCHEMY_POOL_RECYCLE') or 499
+    SQLALCHEMY_POOL_TIMEOUT = os.environ.get('SQLALCHEMY_POOL_TIMEOUT') or 20
     SESSION_PERMANENT = True
     SESSION_TYPE = 'filesystem'
     PERMANENT_SESSION_LIFETIME = timedelta(hours=9)
