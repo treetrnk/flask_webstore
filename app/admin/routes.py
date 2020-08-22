@@ -12,11 +12,11 @@ from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.admin.forms import (
         UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
-        PageEditForm,
+        PageEditForm, OptionEditForm
     )
 from app.admin.functions import save_file, delete_file
 from app.models import (
-        User, Group, Category, Product, Setting, Page,
+        User, Group, Category, Product, Setting, Page, Option
     )
 
 @bp.route('/admin')
@@ -205,6 +205,65 @@ class DeleteProduct(DeleteObjView):
 
 bp.add_url_rule("/admin/product/delete", 
         view_func = group_required('admin')(DeleteProduct.as_view('delete_product')))
+
+##############
+## OPTIONS ################################################################
+##############
+
+class AddOption(SaveObjView):
+    title = "Add Option"
+    model = Option
+    form = OptionEditForm
+    action = 'Add'
+    log_msg = 'added a option'
+    success_msg = 'Option added.'
+    delete_endpoint = 'admin.delete_option'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.products'}
+    context = {'tab': 'products'}
+
+    def extra(self):
+        if self.parent_id:
+            self.form.product_id.data = self.parent_id
+
+    def post_post(self):
+        if self.form.image.data:
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
+
+bp.add_url_rule("/admin/option/add/<int:parent_id>", 
+        view_func=group_required('admin')(AddOption.as_view('add_option')))
+
+class EditOption(SaveObjView):
+    title = "Edit Option"
+    model = Option
+    form = OptionEditForm
+    action = 'Edit'
+    log_msg = 'updated a option'
+    success_msg = 'Option updated.'
+    delete_endpoint = 'admin.delete_option'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.products'}
+    context = {'tab': 'products'}
+
+    def pre_post(self):
+        if self.form.image.data:
+            delete_file(self.obj.image_path)
+            path = save_file(self.form.image.data, self.obj.id, self.obj.name)
+            self.obj.image_path = path
+
+
+bp.add_url_rule("/admin/option/edit/<int:obj_id>", 
+        view_func=group_required('admin')(EditOption.as_view('edit_option')))
+
+class DeleteOption(DeleteObjView):
+    model = Option
+    log_msg = 'deleted a option'
+    success_msg = 'Option deleted.'
+    redirect = {'endpoint': 'admin.products'}
+
+bp.add_url_rule("/admin/option/delete", 
+        view_func = group_required('admin')(DeleteOption.as_view('delete_option')))
 
 ##############
 ## CATEGORY ################################################################

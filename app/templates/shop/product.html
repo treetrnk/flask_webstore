@@ -37,8 +37,21 @@
         </p>
       {% endif %}
       <h4 class="text-center text-dark my-4">
-        ${{ product.price }}
+        {% if product.starting_price() %}
+          ${{ product.starting_price() }}
+        {% endif %}
       </h4>
+
+      <div class="text-center mb-4">
+        <h6>Options:</h6>
+        <div class="btn-group">
+          {% for option in product.options %}
+          <button type="button" class="btn {% if loop.index == 1 %}active{% endif %} btn-outline-primary jquery-tooltip" {% if option.tooltip %}title="{{ option.tooltip }}"{% endif %}>
+              {{ option.name }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
 
       {% if product.is_sold_out() %}
         {{ product.sold_out()|safe }}

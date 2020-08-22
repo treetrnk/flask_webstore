@@ -56,6 +56,25 @@ class ProductEditForm(FlaskForm):
             description="<small class='text-muted ml-4'>Deactivate if the product should no longer be used.</small>",
             render_kw={'data_type': 'switch'})
 
+class OptionEditForm(FlaskForm):
+    product_id = HiddenField('product id', validators=[DataRequired()])
+    name = StringField(f'Name{required}', 
+                validators=[DataRequired(), Length(max=200)])
+    barcode = StringField(f'Barcode', validators=[Length(max=50)])
+    image = FileField('Image')#, validators=[FileAllowed('image', 'File must be an image.')]) 
+    description = TextAreaField('Description', validators=[Length(max=5000)])
+    tooltip = StringField('Tooltip', validators=[Length(max=50)])
+    price = FloatField(f'Price{required}', validators=[DataRequired()], 
+            render_kw={'type': 'number', 'step': '.01'})
+    on_sale = BooleanField('On Sale?', description="")
+    sale_price = FloatField(f'Sale Price', validators=[Optional()], 
+            render_kw={'type': 'number', 'step': '.01'})
+    packaging = StringField('Packaging', validators=[Length(max=50)])
+    notes = StringField('Notes', validators=[Length(max=50)])
+    comment = StringField('Comment', validators=[Length(max=50)])
+    available = IntegerField('Available', validators=[Optional()], render_kw={'type': 'number'})
+    capacity = IntegerField(f'Capacity{required}', validators=[InputRequired()], render_kw={'type': 'number'})
+
 class CategoryEditForm(FlaskForm):
     name = StringField(f'Name{required}', validators=[DataRequired(), Length(max=100)])
     image = FileField('Image')#, validators=[FileAllowed('image', 'File must be an image.')]) 

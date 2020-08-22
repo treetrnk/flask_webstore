@@ -12,9 +12,11 @@
     </a>
     
     <p class="text-center">
-      <b>
-        ${{ product.price }}
-      </b>
+      {% if product.starting_price() %}
+        <b>
+          ${{ product.starting_price() }}
+        </b>
+      {% endif %}
     </p>
 
     {{ product.sold_out()|safe }}

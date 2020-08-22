@@ -220,19 +220,8 @@ class Category(db.Model):
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False, unique=True)
-    sku = db.Column(db.String(200), unique=True)
-    barcode = db.Column(db.String(100), unique=True)
     image_path = db.Column(db.String(1000))
     description = db.Column(db.String(5000))
-    available = db.Column(db.Integer, default=0)
-    capacity = db.Column(db.Integer, nullable=False, default=0)
-    price = db.Column(db.Float)
-    on_sale = db.Column(db.Boolean, default=False)
-    sale_price = db.Column(db.Float)
-    packaging = db.Column(db.String(50))
-    notes = db.Column(db.String(50))
-    comment = db.Column(db.String(50))
-    location = db.Column(db.String(200))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship('Category', backref=backref('products', order_by='Product.name'), lazy=True)
     active = db.Column(db.Boolean, default=True)
@@ -259,7 +248,19 @@ class Product(db.Model):
         return ''
 
     def is_sold_out(self):
-        return True if self.available < 1 else False
+        for option in self.options:
+            if option.available > 0:
+                return False
+        return True 
+
+    def starting_price(self):
+        price = None
+        for option in self.options:
+            if price == None:
+                price = option.price
+            elif option.price < price:
+                price = option.price
+        return price
 
     def sold_out(self):
         if self.is_sold_out():
@@ -320,6 +321,48 @@ class Product(db.Model):
         return f'Product({self.id}, {self.name})'
 
     def __str__(self):
+        return f'{self.name}'
+
+#############
+## OPTION #####################################################################
+#############
+class Option(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=False)
+    product = db.relationship('Product', backref=backref('options', order_by='Option.priority,Option.name'), lazy=True)
+    barcode = db.Column(db.String(100), unique=True)
+    image_path = db.Column(db.String(1000))
+    description = db.Column(db.String(5000))
+    tooltip = db.Column(db.String(100))
+    available = db.Column(db.Integer, default=0)
+    capacity = db.Column(db.Integer, nullable=False, default=0)
+    price = db.Column(db.Float)
+    on_sale = db.Column(db.Boolean, default=False)
+    sale_price = db.Column(db.Float)
+    packaging = db.Column(db.String(50))
+    notes = db.Column(db.String(50))
+    comment = db.Column(db.String(50))
+    location = db.Column(db.String(200))
+    priority = db.Column(db.Integer)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
+    updater_id = db.Column(db.Integer, db.ForeignKey('user.id'))#, onupdate=current_user.id, default=current_user.id)
+
+    def html_description(self):
+        if self.description:
+            return markdown(self.description)
+        return ''
+
+    def image_filename(self):
+        if self.image_path:
+            return self.image_path.split('/')[-1]
+        return ''
+
+    def __repr__(self):
+        return f'Option({self.id}, {self.name})'
+
+    def __str__(self):
         return f'{self.name} ({self.barcode})'
 
 #############
@@ -338,9 +381,9 @@ class Order(db.Model):
 #############
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey(f'order.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey(f'order.id'), nullable=True)
     order = db.relationship('Order', backref=backref('items', order_by='Item.created'), lazy=True)
-    product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=True)
     product = db.relationship('Product', backref=backref('items', order_by='Item.created.desc()'), lazy=True)
     amount = db.Column(db.Integer, default=1, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)

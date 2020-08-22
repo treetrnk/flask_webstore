@@ -40,6 +40,7 @@ class SaveObjView(MethodView):
     model = None
     obj_id = None
     obj = None
+    parent_id = None
     form = None
     action = None
     log_msg = None

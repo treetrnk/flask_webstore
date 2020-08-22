@@ -18,8 +18,7 @@
       <th>Category</th>
       <th>Barcode</th>
       <th>Description</th>
-      <th>Price</th>
-      <th>Inventory</th>
+      <th>Options</th>
     </tr>
   </thead>
   <tbody>
@@ -46,11 +45,22 @@
           {{ product.description[0:100] }}... 
         </td>
         <td>
-          ${{ product.price }}
-        </td>
-        <td>
-          {{ product.available }} /
-          {{ product.capacity }}
+          <small>
+            <ul class="pl-2">
+              {% for option in product.options %}
+                <li>
+                  <a href="{{ url_for('admin.edit_option', obj_id=option.id) }}">
+                    <i class="fas fa-edit"></i>
+                    {{ option.name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+            <a href="{{ url_for('admin.add_option', parent_id=product.id) }}" class="text-success">
+              <i class="fas fa-plus"></i>
+              Add Option
+            </a>
+          </small>
         </td>
       </tr>
     {% endfor %}

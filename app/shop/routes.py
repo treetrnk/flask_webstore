@@ -37,6 +37,7 @@ def index(category='all'):
 def product(obj_id, slug=''):
     product = Product.query.filter_by(id=obj_id,active=True).first()
     form = AddToCartForm()
+    """
     if form.validate_on_submit():
         if session.get('order_id'):
             order = Order.query.filter_by(id=session.get('order_id')).first()
@@ -55,7 +56,7 @@ def product(obj_id, slug=''):
         db.session.commit()
         flash(f'({form.amount.data}) {product.name} has been added to your cart.', 'success')
         return redirect(url_for('shop.cart'))
-
+    """
     form.product_id.data = product.id
     return render_template('shop/product.html',
             product=product,
