@@ -13,6 +13,12 @@
     
     <p class="text-center">
       {% if product.starting_price() %}
+				{% if product.option_count() > 1 %}
+					<small>
+						Starting at:
+					</small>
+					<br />
+				{% endif %}
         <b>
           ${{ product.starting_price() }}
         </b>

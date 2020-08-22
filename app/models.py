@@ -242,6 +242,9 @@ class Product(db.Model):
             return self.image_path.split('/')[-1]
         return ''
 
+    def option_count(self):
+        return len(self.options)
+
     def html_description(self):
         if self.description:
             return markdown(self.description)
@@ -330,7 +333,7 @@ class Option(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=False)
-    product = db.relationship('Product', backref=backref('options', order_by='Option.priority,Option.name'), lazy=True)
+    product = db.relationship('Product', backref=backref('options', order_by='Option.price,Option.name'), lazy=True)
     barcode = db.Column(db.String(100), unique=True)
     image_path = db.Column(db.String(1000))
     description = db.Column(db.String(5000))
