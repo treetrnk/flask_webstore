@@ -58,7 +58,10 @@
       {% else %}
         
         <p class="text-muted text-right">
-          In Stock: {{ product.available }} <br />
+          In Stock: 
+					{% if product.options %}
+						{{ product.options[0].available }}
+					{% endif %}
         </p>
 
         <div class="row mb-2">
