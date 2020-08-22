@@ -5,7 +5,7 @@ app = create_app()
 @app.shell_context_processor
 def make_shell_context():
     from app.models import (
-            User, Group, Comment, Product, 
+            User, Group, Comment, Category, Product, Option, Order, Item, Page, Setting
         )
     return {
         'db': db, 
@@ -14,5 +14,11 @@ def make_shell_context():
         'User': User,
         'Group': Group,
         'Comment': Comment,
+        'Category': Category,
         'Product': Product,
+        'Option': Option,
+        'Order': Order,
+        'Item': Item,
+        'Page': Page,
+        'Setting': Setting,
     }

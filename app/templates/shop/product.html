@@ -36,7 +36,7 @@
           {{ product.category.html_description()|safe }}
         </p>
       {% endif %}
-      <h4 class="text-center text-dark my-4">
+      <h4 class="text-center text-dark my-4 product-price">
         {% if product.starting_price() %}
           ${{ product.starting_price() }}
         {% endif %}
@@ -46,7 +46,12 @@
         <h6>Options:</h6>
         <div class="btn-group">
           {% for option in product.options %}
-          <button type="button" class="btn {% if loop.index == 1 %}active{% endif %} btn-outline-primary jquery-tooltip" {% if option.tooltip %}title="{{ option.tooltip }}"{% endif %}>
+          <button type="button" 
+              class="btn product-option {% if loop.index == 1 %}active{% endif %} btn-outline-secondary jquery-tooltip" {% if option.tooltip %}title="{{ option.tooltip }}"{% endif %}
+              data-id="{{ option.id }}"
+              data-available="{{ option.available }}"
+              data-price="{{ option.price }}"
+              data-image="{{ url_for('main.uploads', filename=option.image_filename) }}">
               {{ option.name }}
             </button>
           {% endfor %}
@@ -59,9 +64,11 @@
         
         <p class="text-muted text-right">
           In Stock: 
-					{% if product.options %}
-						{{ product.options[0].available }}
-					{% endif %}
+          <span class="in-stock">
+            {% if product.options %}
+              {{ product.options[0].available }}
+            {% endif %}
+          </span>
         </p>
 
         <div class="row mb-2">
@@ -71,6 +78,7 @@
             <form action="" method="post">
               <div class="input-group">
                 <input type='hidden' name='product_id' value='{{ product.id }}' />
+                <input type='hidden' name='option_id' value='{{ product.options[0].id if product.options else '' }}' />
                 <input type='number' max="{{ product.available }}" min="1" name="amount" value="1" class="form-control" />
                 <div class="input-group-append">
                   <button type="submit" class="btn btn-primary disabled jquery-tooltip" title="Feature coming soon!" disabled>

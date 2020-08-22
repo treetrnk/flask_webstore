@@ -165,6 +165,33 @@ $(document).ready(function() {
 		tags: true,
 	});
 
+  $('.product-option').click(function() {
+
+    var $this = $(this);
+    var id = $this.data('id');
+    var available = $this.data('available');
+    var price = $this.data('price');
+    var image = $this.data('image');
+    var amount_input = $('input[name="amount"]');
+    if (!$this.hasClass('active') && !$this.hasClass('disabled')) {
+
+      $('.product-option').each(function() {
+        $(this).removeClass('active');
+      });
+      $this.addClass('active');
+      $('.product-price').text('$' + price);
+      $('.in-stock').text(available);
+      amount_input.attr('max', available);
+      if (amount_input.val() > available) {
+        amount_input.val(available);
+      }
+      $('input[name="option_id"]').val(id);
+
+      
+    }
+
+  });
+
 	$('body').on('submit', 'form', function() {
 		var form = $(this);
     var $this = form.find("button[type='submit']");
