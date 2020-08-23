@@ -14,6 +14,12 @@
     </a>
   </li>
   <li class="nav-item">
+    <a class="nav-link {% if tab=='orders' %}active{% endif %}" href="{{ url_for('admin.orders') }}">
+      <i class="fas fa-shopping-cart"></i>
+      Orders
+    </a>
+  </li>
+  <li class="nav-item">
     <a class="nav-link {% if tab=='pages' %}active{% endif %}" href="{{ url_for('admin.pages') }}">
       <i class="fas fa-file"></i>
       Pages

@@ -12,7 +12,7 @@ from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.shop.forms import AddToCartForm
 from app.models import (
-        Product, Category
+        Product, Category, Order, Item,
     )
 
 @bp.route('/shop')
@@ -38,7 +38,6 @@ def index(category='all'):
 def product(obj_id, slug=''):
     product = Product.query.filter_by(id=obj_id,active=True).first()
     form = AddToCartForm()
-    """
     if form.validate_on_submit():
         if session.get('order_id'):
             order = Order.query.filter_by(id=session.get('order_id')).first()
@@ -57,8 +56,8 @@ def product(obj_id, slug=''):
         db.session.commit()
         flash(f'({form.amount.data}) {product.name} has been added to your cart.', 'success')
         return redirect(url_for('shop.cart'))
-    """
     form.product_id.data = product.id
+    form.option_id.data = product.options[0].id if product.options else None
     return render_template('shop/product.html',
             product=product,
             form=form,

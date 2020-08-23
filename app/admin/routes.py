@@ -12,11 +12,11 @@ from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.admin.forms import (
         UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
-        PageEditForm, OptionEditForm
+        PageEditForm, OptionEditForm, OrderEditForm,
     )
 from app.admin.functions import save_file, delete_file
 from app.models import (
-        User, Group, Category, Product, Setting, Page, Option
+        User, Group, Category, Product, Setting, Page, Option, Order,
     )
 
 @bp.route('/admin')
@@ -327,6 +327,58 @@ class DeleteCategory(DeleteObjView):
 
 bp.add_url_rule("/admin/category/delete", 
         view_func = group_required('admin')(DeleteCategory.as_view('delete_category')))
+
+##########
+## ORDER ################################################################
+##########
+
+@bp.route('/admin/orders')
+@group_required('admin')
+def orders():
+    orders = Order.query.all()
+    return render_template('admin/orders.html', 
+            tab='orders', 
+            orders=orders, 
+        )
+
+class AddOrder(SaveObjView):
+    title = "Add Order"
+    model = Order
+    form = OrderEditForm
+    action = 'Add'
+    log_msg = 'added a order'
+    success_msg = 'Order added.'
+    delete_endpoint = 'admin.delete_order'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.orders'}
+    context = {'tab': 'orders'}
+
+bp.add_url_rule("/admin/order/add", 
+        view_func=group_required('admin')(AddOrder.as_view('add_order')))
+
+class EditOrder(SaveObjView):
+    title = "Edit Order"
+    model = Order
+    form = OrderEditForm
+    action = 'Edit'
+    log_msg = 'updated a order'
+    success_msg = 'Order updated.'
+    delete_endpoint = 'admin.delete_order'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.orders'}
+    context = {'tab': 'orders'}
+
+bp.add_url_rule("/admin/order/edit/<int:obj_id>", 
+        view_func=group_required('admin')(EditOrder.as_view('edit_order')))
+
+class DeleteOrder(DeleteObjView):
+    model = Order
+    log_msg = 'deleted a order'
+    success_msg = 'Order deleted.'
+    redirect = {'endpoint': 'admin.orders'}
+
+bp.add_url_rule("/admin/order/delete", 
+        view_func = group_required('admin')(DeleteOrder.as_view('delete_order')))
 
 ##########
 ## PAGE ################################################################

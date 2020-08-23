@@ -70,6 +70,9 @@ class CategoryEditForm(FlaskForm):
     description = TextAreaField(f'Description', validators=[Length(max=1000)])
     priority = IntegerField(f'Priority')
 
+class OrderEditForm(FlaskForm):
+    pass
+
 class PageEditForm(FlaskForm):
     title = StringField(f'Title{required}', validators=[DataRequired(), Length(max=200)])
     slug = StringField(f'Slug{required}', validators=[DataRequired(), Length(max=200)])

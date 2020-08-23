@@ -393,6 +393,12 @@ class Order(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
+    def __repr__(self):
+        return f'Order({self.id}, {self.status})'
+
+    def __str__(self):
+        return f'Order #{self.id} ({self.status})'
+
 #############
 ## ITEM #####################################################################
 #############
