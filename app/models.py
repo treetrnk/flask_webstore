@@ -393,6 +393,14 @@ class Order(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
+    def total_items(self, unique=False):
+        if unique:
+            return len(self.items)
+        total = 0 
+        for item in self.items:
+            total += item.amount
+        return total
+
     def total_cost(self):
         total = 0.0
         for item in self.items:

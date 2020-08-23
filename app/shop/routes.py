@@ -81,6 +81,7 @@ def product(obj_id, slug=''):
             db.session.add(item)
         db.session.commit()
         flash(f'<b>{product.name} - {option.name} (x{form.amount.data})</b> has been added to your cart.', 'success')
+        session['cart_item_count'] = order.total_items()
         return redirect(url_for('shop.cart'))
     form.product_id.data = product.id
     form.option_id.data = product.options[0].id if product.options else None

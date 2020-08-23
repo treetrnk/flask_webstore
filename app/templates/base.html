@@ -34,6 +34,9 @@
                   <a href="{{ url_for('shop.cart') }}" class="nav-link">
 										<i class="fas fa-shopping-cart"></i>
                     Cart
+										{% if session.get('cart_item_count') %}
+											({{ session.get('cart_item_count') }})
+										{% endif %}
                   </a>
                 </li>
 
@@ -96,6 +99,9 @@
                   <a href="{{ url_for('shop.cart') }}" class="nav-link">
 										<i class="fas fa-shopping-cart"></i>
                     Cart
+										{% if session.get('cart_item_count') %}
+											({{ session.get('cart_item_count') }})
+										{% endif %}
                   </a>
                 </li>
 							</ul>
