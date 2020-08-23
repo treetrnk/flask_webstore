@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import db
 from app.auth import bp
 from datetime import datetime
-from app.models import User, Group 
+from app.models import User, Group, Order 
 from app.auth.forms import LoginForm, EditUserForm, EditGroupForm, DeleteUserForm, DeleteGroupForm
 from app.auth.authenticators import group_required
 """
@@ -45,6 +45,10 @@ def login():
         current_app.logger.info(f'Remember {user.email} login? ' + str(form.remember_me.data) + '.\n')
         login_user(user, remember=form.remember_me.data)
         flash('Login successful!', 'success')
+        if session.get('order_id'):
+            order = Order.query.filter_by(id=session.get('order_id')).first()
+            order.user_id = current_user.id
+            db.session.commit()
         return redirect(url_for('admin.index'))
     form.remember_me.data = True
     return render_template('auth/login.html', title='Login', form=form, user='')

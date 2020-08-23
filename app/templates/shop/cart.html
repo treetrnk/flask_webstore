@@ -3,6 +3,58 @@
 
   <h1>Your Cart</h1>
 
-  <p>Nothing here.</p>
+	{% if order and order.items %}
+		
+		<table class="table" width="100%">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Product</th>
+					<th width="75">Amount</th>
+					<th width="100">Price</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in order.items %}
+					<tr>
+						<td width="150">
+							<a href="{{ url_for('shop.product', obj_id=item.product_id) }}">
+								<img src="{{ url_for('main.uploads', filename=item.product.image_filename()) }}" class="img-fluid" />
+							</a>
+						</td>
+						<td>
+							<a href="{{ url_for('shop.product', obj_id=item.product_id) }}">
+								{{ item.product.name }} - {{ item.option.name }} 
+							</a>
+						</td>
+						<td class="text-center">
+							x{{ item.amount }}
+						</td>
+						<td class="text-center">
+							{{ item.total_cost() }}
+						</td>
+					</tr>
+				{% endfor %}
+				<tr>
+					<td></td>
+					<td></td>
+					<td class="text-right"><b>Total:</td>
+					<td class="text-center">{{ order.total_cost() }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p class="alert alert-info">
+			<i class="fas fa-exclamation-triangle"></i>
+			<b>Online Checkout:</b>
+			Online checkout is under construction at the moment. If you would like to order these products, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
+		</p>
+
+	{% else %}
+		<p>
+			Nothing here yet. Head over to the 
+			<a href="{{ url_for('shop.index') }}">shop</a> to add some items.
+		</p>
+	{% endif %}
 
 {% endblock %}

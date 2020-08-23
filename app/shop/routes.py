@@ -37,26 +37,48 @@ def index(category='all'):
 @bp.route('/shop/<int:obj_id>/<string:slug>', methods=['GET','POST'])
 def product(obj_id, slug=''):
     product = Product.query.filter_by(id=obj_id,active=True).first()
+    current_app.logger.debug(session)
     form = AddToCartForm()
     if form.validate_on_submit():
-        order = None
-        if session.get('order_id'):
-            order = Order.query.filter_by(id=session.get('order_id')).first()
+        # Validate Option/Product pairing
+        option = Option.query.filter_by(id=form.option_id.data).first()
+        if option.product_id != product.id:
+            flash('Unable to add item to cart. Please try again. If the problem persists, please contact us at <a href=""></a>.', 'danger')
+            return redirect(url_for('shop.product', obj_id=form.product_id.data))
+        order = Order.query.filter_by(id=session.get('order_id')).first()
+        if not order and current_user.is_authenticated:
+            order = Order.query.filter_by(user_id=current_user.id, status='incomplete').order_by(Order.created.desc()).first()
         if not order:
             order = Order()
+            if current_user.is_authenticated:
+                order.user_id = current_user.id
             db.session.add(order)
             db.session.commit()
             session['order_id'] = order.id
 
         option = Option.query.filter_by(id=form.option_id.data).first()
 
-        item = Item(
-                order_id = order.id,
-                product_id = form.product_id.data,
-                option_id = form.option_id.data,
-                amount = form.amount.data,
-            )
-        db.session.add(item)
+        # Validate option availability
+        if order.in_cart(option.id):
+            item = order.get_item(option.id)
+            if item.amount == option.available:
+                flash(f'Unable to add more of the <b>{product.name} - {option.name}</b> to your cart. Your cart already has all availble stock for the selected option.', 'info')
+                return redirect(url_for('shop.product', obj_id=form.product_id.data))
+            if item.amount + form.amount.data > option.available:
+                added_amount = option.available - item.amount
+                item.amount = option.available
+
+                flash(f'We only added {added_amount} of the <b>{product.name} - {option.name}</b> to your cart, since it is all we have available at the moment.', 'info')
+            else:
+                item.amount += form.amount.data
+        else:
+            item = Item(
+                    order_id = order.id,
+                    product_id = form.product_id.data,
+                    option_id = form.option_id.data,
+                    amount = form.amount.data,
+                )
+            db.session.add(item)
         db.session.commit()
         flash(f'<b>{product.name} - {option.name} (x{form.amount.data})</b> has been added to your cart.', 'success')
         return redirect(url_for('shop.cart'))

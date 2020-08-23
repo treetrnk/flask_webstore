@@ -399,6 +399,18 @@ class Order(db.Model):
             total += item.option.price * item.amount
         return round_half_up(total, 2)
 
+    def in_cart(self, option_id):
+        for item in self.items:
+            if item.option_id == option_id:
+                return True
+        return False
+
+    def get_item(self, option_id):
+        for item in self.items:
+            if item.option_id == option_id:
+                return item
+        return False
+
     def __repr__(self):
         return f'Order({self.id}, {self.status})'
 
@@ -419,6 +431,15 @@ class Item(db.Model):
     amount = db.Column(db.Integer, default=1, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
+
+    def total_cost(self):
+        return self.amount * self.option.price
+    
+    def __repr__(self):
+        return f'Item({self.id}, (order #{self.order_id})'
+
+    def __str__(self):
+        return f'Item #{self.id}'
 
 #############
 ## PAGE #####################################################################

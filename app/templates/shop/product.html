@@ -72,15 +72,15 @@
         </p>
 
         <div class="row mb-2">
-          <div class="col-md-5 col-10 ml-auto">
+          <div class="col-md-5 col-8 ml-auto">
             
 
             <form action="" method="post">
               {{ form.hidden_tag() }}
               <div class="input-group">
-                <input type='number' max="{{ product.available }}" min="1" name="amount" value="1" class="form-control" />
+								{{ form.amount(min="1", max=product.options[0].available, type="number", value=1, class="form-control") }}
                 <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary jquery-tooltip disabled" disabled title="Feature coming soon!" >
+                  <button type="submit" class="btn btn-primary jquery-tooltip " title="Feature coming soon!" >
                     <i class="fas fa-shopping-cart"></i>
                     Add to Cart
                   </button>
@@ -91,11 +91,6 @@
           </div>
         </div>
 
-        <p class="alert alert-info">
-          <i class="fas fa-exclamation-triangle"></i>
-          <b>Website Orders:</b>
-          We cannot proccess online orders at the moment. If you would like to order this product, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
-        </p>
       {% endif %}
 
     </div>
