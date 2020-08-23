@@ -12,7 +12,7 @@ from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.shop.forms import AddToCartForm
 from app.models import (
-        Product, Category, Order, Item,
+        Product, Category, Order, Item, Option
     )
 
 @bp.route('/shop')
@@ -39,22 +39,26 @@ def product(obj_id, slug=''):
     product = Product.query.filter_by(id=obj_id,active=True).first()
     form = AddToCartForm()
     if form.validate_on_submit():
+        order = None
         if session.get('order_id'):
             order = Order.query.filter_by(id=session.get('order_id')).first()
-        else:
+        if not order:
             order = Order()
             db.session.add(order)
             db.session.commit()
             session['order_id'] = order.id
 
+        option = Option.query.filter_by(id=form.option_id.data).first()
+
         item = Item(
                 order_id = order.id,
                 product_id = form.product_id.data,
+                option_id = form.option_id.data,
                 amount = form.amount.data,
             )
         db.session.add(item)
         db.session.commit()
-        flash(f'({form.amount.data}) {product.name} has been added to your cart.', 'success')
+        flash(f'<b>{product.name} - {option.name} (x{form.amount.data})</b> has been added to your cart.', 'success')
         return redirect(url_for('shop.cart'))
     form.product_id.data = product.id
     form.option_id.data = product.options[0].id if product.options else None

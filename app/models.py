@@ -393,6 +393,12 @@ class Order(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
+    def total_cost(self):
+        total = 0.0
+        for item in self.items:
+            total += item.option.price * item.amount
+        return round_half_up(total, 2)
+
     def __repr__(self):
         return f'Order({self.id}, {self.status})'
 
@@ -408,6 +414,8 @@ class Item(db.Model):
     order = db.relationship('Order', backref=backref('items', order_by='Item.created'), lazy=True)
     product_id = db.Column(db.Integer, db.ForeignKey(f'product.id'), nullable=True)
     product = db.relationship('Product', backref=backref('items', order_by='Item.created.desc()'), lazy=True)
+    option_id = db.Column(db.Integer, db.ForeignKey(f'option.id'), nullable=True)
+    option = db.relationship('Option', backref=backref('items', order_by='Item.created.desc()'), lazy=True)
     amount = db.Column(db.Integer, default=1, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
