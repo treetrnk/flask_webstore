@@ -43,3 +43,4 @@ class Config(object):
     ADMINS = os.environ.get('ADMINS') or ''
     ADMINS = ADMINS.split()
     COMPANY_NAME = os.environ.get('COMPANY_NAME') or 'Webstore'
+    COMPANY_TAGLINE = os.environ.get('COMPANY_TAGLINE') or COMPANY_NAME
