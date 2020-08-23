@@ -211,7 +211,7 @@ class Category(db.Model):
         return {
                 'title': f'{self.name} Shop',
                 'description': self.description,
-                'image': url_for('main.uploads', filename=self.image_filename),
+                'image': url_for('main.uploads', filename=self.image_filename()),
             }
 
     def __repr__(self):
@@ -253,7 +253,7 @@ class Product(db.Model):
         return {
                 'title': f'{self.name}',
                 'description': self.description,
-                'image': url_for('main.uploads', filename=self.image_filename),
+                'image': url_for('main.uploads', filename=self.image_filename()),
             }
 
     def option_count(self):
