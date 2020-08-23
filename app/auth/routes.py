@@ -48,6 +48,8 @@ def login():
         if session.get('order_id'):
             order = Order.query.filter_by(id=session.get('order_id')).first()
             order.user_id = current_user.id
+            session['order_id'] = order.id
+            session['cart_item_count'] = order.total_items()
             db.session.commit()
         return redirect(url_for('admin.index'))
     form.remember_me.data = True
