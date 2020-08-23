@@ -207,6 +207,13 @@ class Category(db.Model):
     def active_products(self):
         return Product.query.filter_by(category_id=self.id, active=True).order_by('name').all()
 
+    def head_data(self):
+        return {
+                'title': f'{self.name} Shop',
+                'description': self.description,
+                'image': url_for('main.uploads', filename=self.image_filename),
+            }
+
     def __repr__(self):
         return f'Category({self.id}, {self.name})'
 
@@ -241,6 +248,13 @@ class Product(db.Model):
         if self.image_path:
             return self.image_path.split('/')[-1]
         return ''
+
+    def head_data(self):
+        return {
+                'title': f'{self.name}',
+                'description': self.description,
+                'image': url_for('main.uploads', filename=self.image_filename),
+            }
 
     def option_count(self):
         return len(self.options)
@@ -408,6 +422,12 @@ class Page(db.Model):
         if self.body:
             return markdown(self.body)
         return ''
+
+    def head_data(self):
+        return {
+                'title': f'{self.title}',
+                'description': self.body,
+            }
 
     def __repr__(self):
         return f'Page({self.id}, {self.title})'

@@ -30,6 +30,7 @@ def index(category='all'):
             active=active,
             categories=categories,
             products=products,
+            head_data=active.head_data() if active else None,
         )
 
 @bp.route('/shop/<int:obj_id>', methods=['GET','POST'])
@@ -61,6 +62,7 @@ def product(obj_id, slug=''):
     return render_template('shop/product.html',
             product=product,
             form=form,
+            head_data=product.head_data(),
         )
 
 @bp.route('/cart', methods=['GET','POST'])
