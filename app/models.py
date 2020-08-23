@@ -52,7 +52,7 @@ class User(UserMixin, db.Model):
         inactive = " (Inactive)" if not self.active else ""
         if self.first_name:
             return f"{self.first_name} {self.last_name[0]}.{inactive}" if self.last_name else self.first_name + inactive
-        return self.username + inactive
+        return self.email + inactive
 
     def display_name(self):
         return self.short_name()
