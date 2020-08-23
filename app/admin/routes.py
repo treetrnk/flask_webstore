@@ -524,5 +524,5 @@ def logs():
 @bp.route("/logs/errors")
 @group_required('admin')
 def error_logs():
-    return send_from_directory('../logs', 'flask_webstore_warning.log')
+    return send_from_directory('../textlogs', 'flask_webstore_warnings.log')
 
