@@ -8,10 +8,11 @@
 		<table class="table" width="100%">
 			<thead>
 				<tr>
-					<th></th>
 					<th>Product</th>
+					<th></th>
 					<th width="75">Amount</th>
 					<th width="100">Price</th>
+					<th width="75"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,10 +29,19 @@
 							</a>
 						</td>
 						<td class="text-center">
-							x{{ item.amount }}
+							<input type="number" min="1" max="{{ item.option.available }}" name="amount" value="{{ item.amount }}" class="form-control" />
+							<button type="submit" class="btn btn-link">
+								<i class="fas fa-refresh"></i>
+								Update
+							</button>
 						</td>
 						<td class="text-center">
 							${{ item.total_cost() }}
+						</td>
+						<td class="text-center">
+							<a href="" class="btn btn-sm btn-danger jquery-tooltip" title="Remove from cart">
+								<i class="fas fa-times"></i>
+							</a>
 						</td>
 					</tr>
 				{% endfor %}
