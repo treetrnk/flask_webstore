@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+	{% include 'admin/nav.html' %}
+
+	<h2>Logs</h2>
+
+	<div class="row">
+		{% for category in files %}
+			<div class="col">
+				<h3>{{ category.title() }}</h3>
+				<ul>
+					{% for file in files[category] %}
+						<li>
+							<a href="">
+								{{ file }}
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endfor %}
+	</div>
+
+
+
+{% endblock %}

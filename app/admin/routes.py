@@ -484,3 +484,45 @@ class DeleteSetting(DeleteObjView):
 bp.add_url_rule("/admin/setting/delete", 
         view_func = group_required('admin')(DeleteSetting.as_view('delete_setting')))
 
+##########
+## LOGS ########################################################################
+##########
+@bp.route("/logs")
+@group_required('admin')
+def logs():
+    main_logs = os.listdir(current_app.config['MAIN_LOG_DIR'])
+    product_logs = os.listdir(current_app.config['PRODUCT_LOG_DIR'])
+    scan_logs = os.listdir(current_app.config['SCAN_LOG_DIR'])
+
+    files = {
+            'main': [],
+            'product': [],
+            'scan': [],
+        }
+
+    def create_log_list(logs, path):
+        output = []
+        if logs:
+            for log in sorted(logs):
+                output += [{
+                        'filename': log,
+                        'dir': os.path.basename(os.path.normpath(path))
+                    }]
+        return output
+
+    files['main'] = create_log_list(main_logs, current_app.config['MAIN_LOG_DIR'])[::-1]
+    files['product'] = create_log_list(product_logs, current_app.config['PRODUCT_LOG_DIR'])
+    files['scan'] = create_log_list(scan_logs, current_app.config['SCAN_LOG_DIR'])[::-1]
+
+    current_app.logger.debug(files['scan'])
+
+    return render_template('main/logs.html',
+            title = 'Logs',
+            files = files,
+        )
+
+@bp.route("/logs/errors")
+@group_required('admin')
+def error_logs():
+    return send_from_directory('../logs', 'flask_webstore_warning.log')
+
