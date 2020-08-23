@@ -31,7 +31,7 @@
 							x{{ item.amount }}
 						</td>
 						<td class="text-center">
-							{{ item.total_cost() }}
+							${{ item.total_cost() }}
 						</td>
 					</tr>
 				{% endfor %}
@@ -39,7 +39,7 @@
 					<td></td>
 					<td></td>
 					<td class="text-right"><b>Total:</td>
-					<td class="text-center">{{ order.total_cost() }}</td>
+					<td class="text-center">${{ order.total_cost() }}</td>
 				</tr>
 			</tbody>
 		</table>
