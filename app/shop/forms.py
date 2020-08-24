@@ -11,5 +11,9 @@ class AddToCartForm(FlaskForm):
     option_id = HiddenField('option_id', validators=[DataRequired()])
     amount = IntegerField('Amount', validators=[DataRequired(), NumberRange(min=1)])
 
+class CartUpdateForm(FlaskForm):
+    item_id = HiddenField('item id', validators=[DataRequired()])
+    amount = IntegerField('Amount', validators=[DataRequired(), NumberRange(min=1)], render_kw={'type': 'number'})
+
 class RemoveItemForm(FlaskForm):
     option_id = HiddenField('option id', validators=[DataRequired()])

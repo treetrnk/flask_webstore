@@ -9,8 +9,9 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
+from app.main.forms import DeleteObjForm
 from app.auth.authenticators import group_required
-from app.shop.forms import AddToCartForm
+from app.shop.forms import AddToCartForm, CartUpdateForm
 from app.models import (
         Product, Category, Order, Item, Option
     )
@@ -100,8 +101,43 @@ def product(obj_id, slug=''):
 @bp.route('/cart', methods=['GET','POST'])
 def cart():
     current_app.logger.debug(session)
+    form = CartUpdateForm()
+    delete_form = DeleteObjForm()
     order = Order.query.filter_by(id=session.get('order_id')).first()
     current_app.logger.debug(order)
+    if form.validate_on_submit():
+        item = Item.query.filter_by(id=form.item_id.data,order_id=session.get('order_id')).first()
+        if item:
+            item.amount = form.amount.data
+            db.session.commit()
+            session['cart_item_count'] = item.order.total_items()
+            flash('Your cart has been updated.', 'success')
+            return redirect(url_for('shop.cart'))
     return render_template('shop/cart.html',
             order = order,
+            form = form,
+            delete_form = delete_form,
         )
+
+class DeleteItem(DeleteObjView):
+    model = Item
+    log_msg = 'deleted a item'
+    success_msg = 'Item deleted.'
+    redirect = {'endpoint': 'shop.cart'}
+
+    def pre_post(self):
+        """ 
+        # DELETE CART WHEN DELETING LAST ITEM
+        if self.obj.order.total_items(unique=True) < 2:
+            log_new(self.obj.order, 'Order deleted')
+            db.session.delete(self.obj.order)
+        """
+        if self.obj.order_id != session.get('order_id'):
+            flash('Unable to delete item.', 'warning')
+            return redirect(url_for('shop.cart'))
+
+        session['cart_item_count'] = self.obj.order.total_items() - self.obj.amount
+
+bp.add_url_rule("/cart/item/delete", 
+        view_func = DeleteItem.as_view('delete_item'))
+
