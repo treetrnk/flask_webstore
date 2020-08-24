@@ -114,6 +114,16 @@ a.no-underline, a.no-underline:hover {
 .product-card-image:hover {
   background-size: 175%;
 }
+div.product-thumbnail {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  background-position: center center;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 7px;
+  margin-top: 10px;
+}
 .bg-purple {
 	background-color: #a500ff;
 }

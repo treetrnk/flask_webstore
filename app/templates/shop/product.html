@@ -24,7 +24,25 @@
   <div class="row">
 
     <div class="col-md-6 col-12 mb-4">
-      <img src="{{ url_for('main.uploads', filename=product.image_filename()) }}" class="img-fluid" />
+      <img src="{{ url_for('main.uploads', filename=product.image_filename()) }}" class="img-fluid product-image-display" />
+
+      <div class="product-thumbnails">
+        <div style="background-image: url('{{ url_for('main.uploads', filename=product.image_filename()) }}')" 
+            class="product-thumbnail" 
+            data-image="{{ url_for('main.uploads', filename=product.image_filename()) }}" />
+          &nbsp;
+        </div>
+        {% for option in product.options %}
+          {% if option.image_path %}
+            <div style="background-image: url('{{ url_for('main.uploads', filename=option.image_filename()) }}')"
+                class="product-thumbnail"
+                data-id="{{ option.id }}"
+                data-image="{{ url_for('main.uploads', filename=option.image_filename()) }}" />
+              &nbsp;
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
     </div>
 
     <div class="col">
@@ -48,10 +66,11 @@
           {% for option in product.options %}
           <button type="button" 
               class="btn product-option {% if loop.index == 1 %}active{% endif %} btn-outline-secondary jquery-tooltip" {% if option.tooltip %}title="{{ option.tooltip }}"{% endif %}
+              {% if option.available < 1 %}disabled{% endif %}
               data-id="{{ option.id }}"
               data-available="{{ option.available }}"
               data-price="{{ option.price }}"
-              data-image="{{ url_for('main.uploads', filename=option.image_filename) }}">
+              data-image="{{ url_for('main.uploads', filename=option.image_filename()) }}">
               {{ option.name }}
             </button>
           {% endfor %}

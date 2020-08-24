@@ -186,10 +186,15 @@ $(document).ready(function() {
         amount_input.val(available);
       }
       $('input[name="option_id"]').val(id);
+      $('img.product-image-display').attr('src', image);
 
-      
     }
+  });
 
+  $('div.product-thumbnail').click(function() {
+    var $this = $(this);
+    $('img.product-image-display').attr('src', $this.data('image'));
+    $('button.product-option[data-id="' + $this.data('id') + '"]').click();
   });
 
 	$('body').on('submit', 'form', function() {
