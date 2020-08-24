@@ -34,14 +34,14 @@
                 {{ form.item_id(value=item.id) }}
                 
                 {% if form.amount.errors %}
-                  {{ form.amount(class="form-control is-invalid", value=item.amount, max=item.option.available) }}
+                  {{ form.amount(class="form-control is-invalid", value=item.amount, min=1, max=item.option.available) }}
                   <div class="invalid-feedback">
                     {% for error in form.amount.errors %}
                       <span>{{ error|safe }}</span>
                     {% endfor %}
                   </div>
                 {% else %}
-                  {{ form.amount(class="form-control", value=item.amount, max=item.option.available) }}
+                  {{ form.amount(class="form-control", value=item.amount, min=1, max=item.option.available) }}
                 {% endif %}
                 {{ form.amount.form_text }}
                 {% if form.amount.description %}
