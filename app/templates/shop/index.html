@@ -8,7 +8,7 @@
 
       <div class="col-md-2 col-12">
         <a href="{{ url_for('shop.index') }}" class="no-underline">
-          <div class="product-square {% if active == None %}active{% endif %}" style="background-color: #C8B7B7;">
+          <div class="product-square {% if active == None %}active{% endif %}" style="background-image: url({{ url_for('static', filename='images/jumbotron-bg.jpg') }});background-size: auto;">
             <p>All</p>
           </div>
         </a>
