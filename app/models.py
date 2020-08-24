@@ -287,7 +287,7 @@ class Product(db.Model):
 
     def sold_out(self):
         if self.is_sold_out():
-            return '<p class="text-center"><span class="border border-dark px-2">OUT OF STOCK</span></p>'
+            return '<p class="text-center"><small class="border border-dark px-2">OUT OF STOCK</small></p>'
         return ''
 
     def export_inventory(active_only=True):
