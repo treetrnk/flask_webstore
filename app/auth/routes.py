@@ -46,13 +46,13 @@ def login():
         login_user(user, remember=form.remember_me.data)
         flash('Login successful!', 'success')
         current_app.logger.debug(session)
-        order = Order.query.filter_by(id=session.get('order_id')).first()
+        order = Order.query.filter_by(id=session.get('order_id'), status='Incomplete').first()
         current_app.logger.debug(order)
         if order:
             order.user_id = current_user.id
             db.session.commit()
         else:
-            order = Order.query.filter_by(user_id=user.id).order_by(Order.created.desc()).first()
+            order = Order.query.filter_by(user_id=user.id, status='Incomplete').order_by(Order.created.desc()).first()
             current_app.logger.debug(order)
         if order:
             session['order_id'] = order.id

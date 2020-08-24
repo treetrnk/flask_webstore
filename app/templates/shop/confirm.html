@@ -3,6 +3,26 @@
 
   <h1>Confirm Your Order</h1>
 
+  <h3 class="mt-4">Shipping To:</h3>
+
+  <p>
+    <b>
+      {{ order.shipping.full_name }}
+    </b><br />
+    {{ order.shipping.email }}<br />
+    {% if order.shipping.phone %}
+      {{ order.shipping.phone }}<br />
+    {% endif %}
+    {{ order.shipping.address_1 }}<br />
+    {% if order.shipping.address_2 %}
+      {{ order.shipping.address_2 }}<br />
+    {% endif %}
+    {{ order.shipping.city }},
+    {{ order.shipping.state }}<br />
+    {{ order.shipping.zipcode }}
+  </p>
+
+  <h3 class="mt-4">Items</h3>
 	{% if order and order.items %}
 		
 		<table class="table" width="100%">
@@ -49,26 +69,6 @@
 		</table>
 
   {% endif %}
-
-  <h3>Shipping To:</h3>
-
-  <p>
-    <b>
-      {{ order.shipping.full_name }}
-    </b><br />
-    {{ order.shipping.email }}<br />
-    {% if order.shipping.phone %}
-      {{ order.shipping.phone }}<br />
-    {% endif %}
-    {{ order.shipping.address_1 }}<br />
-    {% if order.shipping.address_2 %}
-      {{ order.shipping.address_2 }}<br />
-    {% endif %}
-    {{ order.shipping.city }},
-    {{ order.shipping.state }}<br />
-    {{ order.shipping.zipcode }}
-
-  </p>
 
   <div class="alert alert-info">
     <b>

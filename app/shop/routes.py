@@ -103,7 +103,7 @@ def cart():
     current_app.logger.debug(session)
     form = CartUpdateForm()
     delete_form = DeleteObjForm()
-    order = Order.query.filter_by(id=session.get('order_id')).first()
+    order = Order.query.filter_by(id=session.get('order_id'), status='Incomplete').first()
     current_app.logger.debug(order)
     if form.validate_on_submit():
         item = Item.query.filter_by(id=form.item_id.data,order_id=session.get('order_id')).first()
@@ -175,7 +175,9 @@ def confirm():
     if form.validate_on_submit():
         order.status = 'Confirmed'
         db.session.commit()
-        msg = "Thank you for your order! We will begin working on it shortly. Go to your <a href='" + url_for('profile.index') + "'>account page</a> to check on it's status."
+        msg = "Thank you for your order! We will begin working on it shortly."
+        if current_user.is_authenticated:
+            msg += "Go to your <a href='" + url_for('profile.index') + "'>account page</a> to check on it's status."
         flash(msg, 'success')
         session['order_id'] = 0
         session['cart_item_count'] = 0
