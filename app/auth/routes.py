@@ -45,15 +45,18 @@ def login():
         current_app.logger.info(f'Remember {user.email} login? ' + str(form.remember_me.data) + '.\n')
         login_user(user, remember=form.remember_me.data)
         flash('Login successful!', 'success')
-        if session.get('order_id'):
-            order = Order.query.filter_by(id=session.get('order_id')).first()
-            if order:
-                order.user_id = current_user.id
-            else:
-                order = Order.query.filter_by(user_id=user.id).order_by(Order.created.desc()).first()
-                session['order_id'] = order.id
-                session['cart_item_count'] = order.total_items()
+        current_app.logger.debug(session)
+        order = Order.query.filter_by(id=session.get('order_id')).first()
+        current_app.logger.debug(order)
+        if order:
+            order.user_id = current_user.id
             db.session.commit()
+        else:
+            order = Order.query.filter_by(user_id=user.id).order_by(Order.created.desc()).first()
+            current_app.logger.debug(order)
+        if order:
+            session['order_id'] = order.id
+            session['cart_item_count'] = order.total_items()
         return redirect(url_for('admin.index'))
     form.remember_me.data = True
     return render_template('auth/login.html', title='Login', form=form, user='')

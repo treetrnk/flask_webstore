@@ -99,7 +99,9 @@ def product(obj_id, slug=''):
 
 @bp.route('/cart', methods=['GET','POST'])
 def cart():
+    current_app.logger.debug(session)
     order = Order.query.filter_by(id=session.get('order_id')).first()
+    current_app.logger.debug(order)
     return render_template('shop/cart.html',
             order = order,
         )
