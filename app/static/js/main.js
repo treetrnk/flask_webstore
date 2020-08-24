@@ -186,7 +186,9 @@ $(document).ready(function() {
         amount_input.val(available);
       }
       $('input[name="option_id"]').val(id);
-      $('img.product-image-display').attr('src', image);
+      if (image != "/uploads/") {
+        $('img.product-image-display').attr('src', image);
+      }
 
     }
   });
