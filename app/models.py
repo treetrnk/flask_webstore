@@ -396,6 +396,12 @@ class Order(db.Model):
     status = db.Column(db.String(100), default='Incomplete')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=backref('orders', order_by='Order.created.desc()'), lazy=True)
+    shipping_id = db.Column(db.Integer, db.ForeignKey('information.id'))
+    shipping = db.relationship('Information', foreign_keys=shipping_id, 
+            backref='shipping_orders', lazy=True)
+    billing_id = db.Column(db.Integer, db.ForeignKey('information.id'))
+    billing = db.relationship('Information', foreign_keys=billing_id, 
+            backref='billing_orders', lazy=True)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
@@ -449,6 +455,94 @@ class Item(db.Model):
     def total_cost(self):
         return self.amount * self.option.price
     
+    def __repr__(self):
+        return f'Item({self.id}, (order #{self.order_id})'
+
+    def __str__(self):
+        return f'Item #{self.id}'
+
+#################
+## INFORMATION #####################################################################
+#################
+class Information(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    full_name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150))
+    phone = db.Column(db.String(20))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=backref('informations', order_by='Information.default.desc(),Information.name'), lazy=True)
+    type = db.Column(db.String(50), default="shipping")
+    address_1 = db.Column(db.String(200), nullable=False)
+    address_2 = db.Column(db.String(200))
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(100), nullable=False)
+    zipcode = db.Column(db.String(20), nullable=False)
+    card = db.Column(db.String(200))
+    expiration = db.Column(db.String(10))
+    cvc = db.Column(db.String(10))
+    default = db.Column(db.Boolean, default=False)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
+
+    TYPE_CHOICES = (
+            ['shipping', 'Shipping'],
+            ['billing', 'Billing'],
+        )
+
+    STATE_CHOICES = (
+            ['Alabama','Alabama'],
+            ['Alaska','Alaska'],
+            ['Arizona','Arizona'],
+            ['Arkansas','Arkansas'],
+            ['California','California'],
+            ['Colorado','Colorado'],
+            ['Connecticut','Connecticut'],
+            ['Delaware','Delaware'],
+            ['Florida','Florida'],
+            ['Georgia','Georgia'],
+            ['Hawaii','Hawaii'],
+            ['Idaho','Idaho'],
+            ['Illinois','Illinois'],
+            ['Indiana','Indiana'],
+            ['Iowa','Iowa'],
+            ['Kansas','Kansas'],
+            ['Kentucky','Kentucky'],
+            ['Louisiana','Louisiana'],
+            ['Maine','Maine'],
+            ['Maryland','Maryland'],
+            ['Massachusetts','Massachusetts'],
+            ['Michigan','Michigan'],
+            ['Minnesota','Minnesota'],
+            ['Mississippi','Mississippi'],
+            ['Missouri','Missouri'],
+            ['Montana','Montana'],
+            ['Nebraska','Nebraska'],
+            ['Nevada','Nevada'],
+            ['New Hampshire','New Hampshire'],
+            ['New Jersey','New Jersey'],
+            ['New Mexico','New Mexico'],
+            ['New York','New York'],
+            ['North Carolina','North Carolina'],
+            ['North Dakota','North Dakota'],
+            ['Ohio','Ohio'],
+            ['Oklahoma','Oklahoma'],
+            ['Oregon','Oregon'],
+            ['Pennsylvania','Pennsylvania'],
+            ['Rhode Island','Rhode Island'],
+            ['South Carolina','South Carolina'],
+            ['South Dakota','South Dakota'],
+            ['Tennessee','Tennessee'],
+            ['Texas','Texas'],
+            ['Utah','Utah'],
+            ['Vermont','Vermont'],
+            ['Virginia','Virginia'],
+            ['Washington','Washington'],
+            ['West Virginia','West Virginia'],
+            ['Wisconsin','Wisconsin'],
+            ['Wyoming','Wyoming'],
+        )
+
     def __repr__(self):
         return f'Item({self.id}, (order #{self.order_id})'
 

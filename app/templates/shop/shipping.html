@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h1>Shipping Information</h1>
+
+		<form method="post" action="">
+			{{ form.hidden_tag() }}
+
+      {% include 'form-fields.html' %}
+    
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col">
+					<button type="submit" class="btn btn-primary">
+						<i class="fas fa-save"></i>
+						Save Shipping
+					</button>
+					<a href="{{ url_for('shop.cart') }}" class="btn btn-secondary">
+						<i class="fas fa-ban"></i>
+						Cancel
+					</a>
+        </div>
+      </div>
+
+    </form>
+
+
+{% endblock %}

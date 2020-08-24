@@ -11,9 +11,9 @@ from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.main.forms import DeleteObjForm
 from app.auth.authenticators import group_required
-from app.shop.forms import AddToCartForm, CartUpdateForm
+from app.shop.forms import AddToCartForm, CartUpdateForm, ShippingForm, ConfirmForm
 from app.models import (
-        Product, Category, Order, Item, Option
+        Product, Category, Order, Item, Option, Information
     )
 
 @bp.route('/shop')
@@ -141,3 +141,46 @@ class DeleteItem(DeleteObjView):
 bp.add_url_rule("/cart/item/delete", 
         view_func = DeleteItem.as_view('delete_item'))
 
+@bp.route('/cart/shipping', methods=['GET','POST'])
+def shipping():
+    order = Order.query.filter_by(id=session.get('order_id')).first()
+    shipping = order.shipping if order.shipping else Information()
+    form = ShippingForm(obj=shipping)
+    form.state.choices = Information.STATE_CHOICES
+    if form.validate_on_submit():
+        form.populate_obj(shipping)
+        shipping.type = 'shipping'
+        if current_user.is_authenticated:
+            shipping.user_id = current_user.id
+        if not shipping.id:
+            db.session.add(shipping)
+        db.session.commit()
+        order.shipping_id = shipping.id
+        db.session.commit()
+        return redirect(url_for('shop.confirm'))
+    form.state.data='Pennsylvania'
+    return render_template('shop/shipping.html',
+            form=form,
+            order=order,
+        )
+
+@bp.route('/cart/confirm', methods=['GET','POST'])
+def confirm():
+    order = Order.query.filter_by(id=session.get('order_id')).first()
+    if order.status != 'Incomplete':
+        return redirect(url_for('shop.index'))
+    form = ConfirmForm(obj=order)
+    if not order.shipping:
+        return redirect(url_for('shop.shipping'))
+    if form.validate_on_submit():
+        order.status = 'Confirmed'
+        db.session.commit()
+        msg = "Thank you for your order! We will begin working on it shortly. Go to your <a href='" + url_for('profile.index') + "'>account page</a> to check on it's status."
+        flash(msg, 'success')
+        session['order_id'] = 0
+        session['cart_item_count'] = 0
+        return redirect(url_for('shop.index'))
+    return render_template('shop/confirm.html',
+            form=form,
+            order=order,
+        )

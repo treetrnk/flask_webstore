@@ -57,6 +57,8 @@ def login():
         if order:
             session['order_id'] = order.id
             session['cart_item_count'] = order.total_items()
+        else:
+            session['cart_item_count'] = 0
         if user.in_group('admin'):
             return redirect(url_for('admin.index'))
         else:
@@ -68,7 +70,7 @@ def login():
 def logout():
     current_app.logger.info(f'{current_user.email} logged out.\n')
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.index'))
 
 @bp.route("/users")
 @bp.route("/users/inactive", defaults={'inactive': True}, endpoint="inactive_users")

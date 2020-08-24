@@ -88,7 +88,9 @@ def log_product_change(product, message):
 
 def log_new(obj, message=''):
     data = convert_to_dict(obj)
-    output = f'{current_user.username} {message}:\n'
+    output = ""
+    output += str(current_user.username) if current_user.is_authenticated else ''
+    output += f'{message}:\n'
     for key, value in data.items():
         output += f"    {key}: {value}\n"
     #print(output)
@@ -98,7 +100,9 @@ def log_new(obj, message=''):
 def log_change(original, updated=None, message='changed something'):
     original_data = convert_to_dict(original)
     if updated:
-        output = f'{current_user.username} {message}:\n'
+        output = ""
+        output += str(current_user.username) if current_user.is_authenticated else ''
+        output += f'{message}:\n'
         output += f"Changed object: {original['repr']}\n"
         updated_data = convert_to_dict(updated)
         for key, value in original_data.items():

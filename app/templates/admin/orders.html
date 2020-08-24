@@ -17,6 +17,7 @@
       <th>User</th>
       <th>Items</th>
       <th>Total</th>
+      <th>Shipping</th>
       <th>Status</th>
     </tr>
   </thead>
@@ -47,6 +48,11 @@
         </td>
         <td>
           ${{ order.total_cost() }}
+        </td>
+        <td>
+          {% if order.shipping %}
+            {{ order.shipping.address_1 }}
+          {% endif %}
         </td>
         <td>
           {{ order.status }}
