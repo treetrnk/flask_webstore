@@ -78,11 +78,16 @@
 			</tbody>
 		</table>
 
-		<p class="alert alert-info">
-			<i class="fas fa-exclamation-triangle"></i>
-			<b>Online Checkout:</b>
-			Online checkout is under construction at the moment. If you would like to order these products, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we'll get back to you as soon as possible.
-		</p>
+    <div class="text-right">
+      <a href="{{ url_for('shop.index') }}" class="btn btn-secondary">
+        <i class="fas fa-seedling"></i>
+        Continue Shopping
+      </a>
+      <a href="{# url_for('shop.checkout') #}" class="btn btn-primary disabled jquery-tooltip" disabled title="Feature coming soon! In the meantime, please email us to checkout.">
+        <i class="fas fa-shopping-bag"></i>
+        Checkout
+      </a>
+    </div>
 
 	{% else %}
 		<p>
