@@ -68,6 +68,9 @@ h1,h2,h3,h4,h5,h6 {
 .admin-thumbnail {
   max-width: 100px;
 }
+.admin-thumbnail-sm {
+  max-width: 50px;
+}
 a.no-underline, a.no-underline:hover {
   text-decoration: none !important;
 }

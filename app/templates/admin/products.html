@@ -17,14 +17,13 @@
       <th>Image</th>
       <th>Category</th>
       <th>Link</th>
-      <th>Description</th>
       <th>Options</th>
 			<th>Active</th>
     </tr>
   </thead>
   <tbody>
     {% for product in products %}
-      <tr>
+    <tr {% if not product.active %}class="table-warning"{% endif %}>
         <td>
           <a href="{{ url_for('admin.edit_product', obj_id=product.id) }}">
             <i class="fas fa-edit"></i>
@@ -47,24 +46,56 @@
 					</a>
 				</td>
         <td>
-          {{ product.description[0:100] }}... 
-        </td>
-        <td>
+
           <small>
-            <ul class="pl-2">
-              {% for option in product.options %}
-                <li>
-                  <a href="{{ url_for('admin.edit_option', obj_id=option.id) }}">
-                    <i class="fas fa-edit"></i>
-                    {{ option.name }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
-            <a href="{{ url_for('admin.add_option', parent_id=product.id) }}" class="text-success">
-              <i class="fas fa-plus"></i>
-              Add Option
-            </a>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Barcode</th>
+                  <th>Image</th>
+                  <th>Price</th>
+                  <th>Avaialable</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for option in product.options %}
+                  <tr>
+                    <td>
+                      <a href="{{ url_for('admin.edit_option', obj_id=option.id) }}">
+                        <i class="fas fa-edit"></i>
+                        {{ option.name }}
+                      </a>
+                    </td>
+                    <td>
+                      {{ option.barcode }}
+                    </td>
+                    <td>
+                      {% if option.image_path %}
+                        <a href="{{ url_for('main.uploads', filename=option.image_filename()) }}" target='products'>
+                          <img src="{{ url_for('main.uploads', filename=option.image_filename()) }}" class="img-fluid admin-thumbnail-sm" />
+                        </a>
+                      {% endif %}
+                    </td>
+                    <td>
+                      ${{ option.price }}
+                    </td>
+                    <td class="text-center">
+                      {{ option.available }}
+                      /
+                      {{ option.capacity }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="text-center">
+              <a href="{{ url_for('admin.add_option', parent_id=product.id) }}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-plus"></i>
+                Add Option
+              </a>
+            </div>
           </small>
         </td>
 				<td class="text-center">
