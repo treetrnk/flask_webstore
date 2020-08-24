@@ -31,6 +31,17 @@
                 </li>
 
                 <li class="nav-item d-inline d-md-none">
+                  {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile.index') }}" class="nav-link">
+                  {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">
+                  {% endif %}
+                      <i class="fas fa-user"></i>
+                      Account
+                    </a>
+                </li>
+
+                <li class="nav-item d-inline d-md-none">
                   <a href="{{ url_for('shop.cart') }}" class="nav-link">
 										<i class="fas fa-shopping-cart"></i>
                     Cart
@@ -95,7 +106,16 @@
 				<div id="navbar-spacer">
 
               <ul class="navbar-nav d-none d-md-block">
-                <li class="nav-item mx-md-auto">
+                <li class="nav-item float-left mr-3">
+                  {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile.index') }}" class="nav-link">
+                  {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">
+                  {% endif %}
+                      <i class="fas fa-user"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
                   <a href="{{ url_for('shop.cart') }}" class="nav-link">
 										<i class="fas fa-shopping-cart"></i>
                     Cart

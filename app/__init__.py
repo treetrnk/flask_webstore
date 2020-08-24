@@ -46,6 +46,9 @@ def create_app(test_config=None):
     from app.shop import bp as shop_bp
     app.register_blueprint(shop_bp)
 
+    from app.profile import bp as profile_bp
+    app.register_blueprint(profile_bp)
+
     from app.blog import bp as blog_bp
     app.register_blueprint(blog_bp)
 

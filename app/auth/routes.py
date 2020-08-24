@@ -57,7 +57,10 @@ def login():
         if order:
             session['order_id'] = order.id
             session['cart_item_count'] = order.total_items()
-        return redirect(url_for('admin.index'))
+        if user.in_group('admin'):
+            return redirect(url_for('admin.index'))
+        else:
+            return redirect(url_for('main.index'))
     form.remember_me.data = True
     return render_template('auth/login.html', title='Login', form=form, user='')
 
