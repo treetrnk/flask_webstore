@@ -26,7 +26,10 @@
 						<td>
 							<a href="{{ url_for('shop.product', obj_id=item.product_id) }}">
 								{{ item.product.name }} - {{ item.option.name }} 
-							</a>
+              </a><br />
+              <small class='text-muted'>
+                In stock: {{ item.option.available }}
+              </small>
 						</td>
 						<td class="text-center">
               <form action="" method="post">
