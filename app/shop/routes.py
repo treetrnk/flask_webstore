@@ -36,7 +36,13 @@ def index(category='all'):
 @bp.route('/shop/<int:obj_id>', methods=['GET','POST'])
 @bp.route('/shop/<int:obj_id>/<string:slug>', methods=['GET','POST'])
 def product(obj_id, slug=''):
-    product = Product.query.filter_by(id=obj_id,active=True).first()
+    product = Product.query.filter_by(id=obj_id).first()
+    if not product.active:
+        if not current_user.is_authenticated or not current_user.in_group('admin'):
+            flash('The product you are looking for is either inactive or no longer available.', 'warning')
+            return redirect(url_for('shop.index'))
+        else:
+            flash('This listing is inactive. You can only see this because you are an administrator.', 'info')
     current_app.logger.debug(session)
     form = AddToCartForm()
     if form.validate_on_submit():

@@ -16,9 +16,10 @@
       <th>Name</th>
       <th>Image</th>
       <th>Category</th>
-      <th>Barcode</th>
+      <th>Link</th>
       <th>Description</th>
       <th>Options</th>
+			<th>Active</th>
     </tr>
   </thead>
   <tbody>
@@ -40,7 +41,11 @@
         <td>
           {{ product.category.name }}
         </td>
-        <td>{{ product.barcode }}</td>
+				<td>
+					<a href="{{ url_for('shop.product', obj_id=product.id) }}">
+						<i class="fas fa-eye"></i> View
+					</a>
+				</td>
         <td>
           {{ product.description[0:100] }}... 
         </td>
@@ -62,6 +67,11 @@
             </a>
           </small>
         </td>
+				<td class="text-center">
+					{% if product.active %}
+						<i class="fas fa-check-circle text-success"></i>
+					{% endif %}
+				</td>
       </tr>
     {% endfor %}
   </tbody>
