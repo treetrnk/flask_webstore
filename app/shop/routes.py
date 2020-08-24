@@ -20,7 +20,7 @@ from app.models import (
 def index(category='all'):
     active = None
     categories = Category.query.order_by('priority','name').all()
-    products = Product.query
+    products = Product.query.filter_by(active=True)
     if category != 'all':
         active = Category.query.filter(Category.name.ilike(category)).first()
         products = products.filter(Product.category.has(Category.name == category))
