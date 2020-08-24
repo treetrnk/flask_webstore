@@ -7,9 +7,12 @@
   </a>
 
   <div class="card-body">
-    <a href="{{ url_for('shop.product', obj_id=product.id, slug=product.slugify()) }}">
-      <h5>{{ product.name }}</h5>
-    </a>
+    <h5 class="mb-0">
+      <a href="{{ url_for('shop.product', obj_id=product.id, slug=product.slugify()) }}">
+        {{ product.name }}
+      </a>
+    </h5>
+    <small class="text-muted mt-0">{{ product.category }}</small>
     
     <p class="text-center">
       {% if product.starting_price() %}
@@ -24,6 +27,14 @@
         </b>
       {% endif %}
     </p>
+
+    {% with total_avail = product.total_available() %}
+      {% if total_avail < 4 and total_avail > 0 %}
+        <small class="text-danger">
+          Only {{ total_avail }} available
+        </small>
+      {% endif %}
+    {% endwith %}
 
     {{ product.sold_out()|safe }}
 

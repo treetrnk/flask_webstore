@@ -259,6 +259,12 @@ class Product(db.Model):
     def option_count(self):
         return len(self.options)
 
+    def total_available(self):
+        total = 0
+        for option in self.options:
+            total += option.available
+        return total
+
     def html_description(self):
         if self.description:
             return markdown(self.description)
