@@ -180,6 +180,8 @@ def confirm():
         return redirect(url_for('shop.shipping'))
     if form.validate_on_submit():
         order.status = 'Confirmed'
+        for item in order.items:
+            item.option.available -= item.amount
         db.session.commit()
         msg = "Thank you for your order! We will begin working on it shortly."
         if current_user.is_authenticated:
