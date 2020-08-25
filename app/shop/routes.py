@@ -52,9 +52,9 @@ def product(obj_id, slug=''):
         if option.product_id != product.id:
             flash('Unable to add item to cart. Please try again. If the problem persists, please contact us at <a href=""></a>.', 'danger')
             return redirect(url_for('shop.product', obj_id=form.product_id.data))
-        order = Order.query.filter_by(id=session.get('order_id')).first()
+        order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
         if not order and current_user.is_authenticated:
-            order = Order.query.filter_by(user_id=current_user.id, status='incomplete').order_by(Order.created.desc()).first()
+            order = Order.query.filter_by(user_id=current_user.id, status='Incomplete').order_by(Order.created.desc()).first()
         if not order:
             order = Order()
             if current_user.is_authenticated:
@@ -104,6 +104,10 @@ def cart():
     form = CartUpdateForm()
     delete_form = DeleteObjForm()
     order = Order.query.filter_by(id=session.get('order_id'), status='Incomplete').first()
+    if order: 
+        session['cart_item_count'] = order.total_items()
+    else:
+        session['cart_item_count'] = 0
     current_app.logger.debug(order)
     if form.validate_on_submit():
         item = Item.query.filter_by(id=form.item_id.data,order_id=session.get('order_id')).first()
@@ -143,7 +147,9 @@ bp.add_url_rule("/cart/item/delete",
 
 @bp.route('/cart/shipping', methods=['GET','POST'])
 def shipping():
-    order = Order.query.filter_by(id=session.get('order_id')).first()
+    order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+    if not order:
+        return redirect(url_for('shop.cart'))
     shipping = order.shipping if order.shipping else Information()
     form = ShippingForm(obj=shipping)
     form.state.choices = Information.STATE_CHOICES
@@ -181,6 +187,7 @@ def confirm():
         flash(msg, 'success')
         session['order_id'] = 0
         session['cart_item_count'] = 0
+        order.notify_confirmed()
         return redirect(url_for('shop.index'))
     return render_template('shop/confirm.html',
             form=form,

@@ -1,0 +1,53 @@
+{% extends 'email/base.html' %}
+{% block content %}
+
+			<h1>Order Confirmation</h1>
+			<p style="color: #aaa;">
+				Order #{{ order.id }}
+			</p>
+
+			<p>
+				Thank you for your order! We will begin working on it right away. If you
+				have any questions or concerns, please email us at <a href="mailto:{{ config.get('MAIL_USERNAME') }}">{{config.get('MAIL_USERNAME') }}</a>.
+			</p>
+			<p>
+				Please note, we currently do deliveries on Thursday evenings. Payment
+				is expected in full at the time of delivery. We currently accept venmo 
+				payments to @treetrnk or cash.
+			</p>
+
+			<h3>Items</h3>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+				<tr style="border-bottom: 1px solid #666;">
+					<th>Product</th>
+					<th>Quantity</th>
+					<th>Price</th>
+				</tr>
+				{% for item in order.items %}
+					<tr style="border-bottom: 1px solid #ccc;">
+						<td>
+							<img src="{{ config.get('BASE_URL') }}{{ url_for('main.uploads', filename=item.product.image_filename()) }}" width="100" style="float: left;width:100px;margin-right:10px;" />
+							{{ item.option.product.name }}
+							-
+							{{ item.option.name }}
+						</td>
+						<td style="text-align:center;">
+							{{ item.amount }}
+						</td>
+						<td style="text-align:center;">
+							${{ item.total_cost() }}
+						</td>
+					</tr>
+				{% endfor %}
+				<tr style="margin-top:10px;">
+					<td></td>
+					<td style="text-align:right;">
+						<b>Total:</b>
+					</td>
+					<td style="text-align:center;">
+						${{ order.total_cost() }}
+					</td>
+				</tr>
+			</table>
+
+{% endblock %}

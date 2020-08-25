@@ -11,7 +11,10 @@ class Config(object):
     if env and env == 'development':
         DEBUG = True
         DEVELOPMENT = True
-        MAIL_SUPPRESS_SEND = True
+        if os.environ.get('MAIL_SUPPRESS_SEND') == 'False':
+            MAIL_SUPPRESS_SEND = False
+        else:
+            MAIL_SUPPRESS_SEND = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'lkdsnfowqieo1293012nindsak012'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or \
         'sqlite:///' + os.path.join(datadir, 'app.db')

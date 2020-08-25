@@ -431,6 +431,21 @@ class Order(db.Model):
                 return item
         return False
 
+    def notify_confirmed(self):
+        sender = current_app.config['MAIL_DEFAULT_SENDER']
+        subject=f"Order Confirmation #{self.id} - {current_app.config.get('COMPANY_NAME')}"
+        body=f"Your order has been confirmed. We will begin working on it shortly. We currently do deliveries every Thursday evening. If you have any questions please email us at {current_app.config.get('MAIL_USERNAME')}. \r\n\r\nYour order:\r\n"
+        for item in self.items:
+            body += f"{item.option.product.name} - {item.option.name} (x{item.amount}) ${item.total_cost()}"
+        body += f"Order Total: ${self.total_cost}"
+        send_email(
+                subject,
+                sender,
+                [self.shipping.email, current_app.config.get('MAIL_USERNAME')],
+                body,
+                render_template('email/order-confirmation.html', order=self),
+            )
+
     def __repr__(self):
         return f'Order({self.id}, {self.status})'
 
