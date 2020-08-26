@@ -8,16 +8,31 @@
 
 <h1>Your Account</h1>
 
-<ul class="list-unstyled my-5">
+<ul class="list-unstyled mt-5">
   <li>
     <b>Name:</b>
     {{ user.first_name }} {{ user.last_name if user.last_name else '' }}
   </li>
   <li>
     <b>Email:</b>
-    {{ user.email }}
+    <a href="mailto:{{ user.email }}">
+      {{ user.email }}
+    </a>
+  </li>
+  <li>
+    <b>Phone:</b>
+    {{ user.phone if user.phone else ''}}
+  </li>
+  <li>
+    <b>Company:</b>
+    {{ user.company if user.company else ''}}
   </li>
 </ul>
+
+<a href="{{ url_for('auth.edit_user') }}" class="btn btn-sm btn-primary mb-5">
+  <i class="fas fa-cogs"></i>
+  Edit Account
+</a>
 
 <h3>Orders</h3>
 <table class="table table-striped table-hover datatable">

@@ -16,12 +16,3 @@ from app.models import (
         User, Order,
     )
 
-@bp.route('/profile')
-@login_required
-def index():
-    user = User.query.filter_by(id=current_user.id).first()
-    orders = Order.query.filter_by(user_id=user.id).all()
-    return render_template('profile/index.html',
-            user=user,
-            orders=orders,
-        )

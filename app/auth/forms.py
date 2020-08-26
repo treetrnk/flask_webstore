@@ -6,11 +6,11 @@ from wtforms import (
     )
 from wtforms.ext.appengine.db import model_form
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
-from wtforms.validators import DataRequired, ValidationError, EqualTo, Email, Optional, NumberRange, Regexp
+from wtforms.validators import DataRequired, ValidationError, EqualTo, Email, Optional, NumberRange, Regexp, Length
 from app.models import User, Group
 from flask_login import current_user
 
-required = '<span class="text-danger">*</span>'
+required = ' *'
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(),Email()])
@@ -18,68 +18,79 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
+class SignUpForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired(), Length(max=100)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=100)])
+    email = StringField('Email', validators=[DataRequired(),Email()])
+    new_password = PasswordField('Password', validators=[DataRequired(), Length(min=7,max=20)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('new_password')])
+    subscribed = BooleanField('Subscribe to our Newsletter?')
+    submit = SubmitField('Sign Up')
+
+    def validate_email(self, email):
+        user = User.query.filter(User.email.ilike(self.email.data)).first()
+        if user:
+            raise ValidationError(f'An account already exists for {self.email.data}.')
+
+    def validate_new_password(self, new_password):
+        if self.new_password.data:
+            password = self.new_password.data
+            success = True
+            specials = ['~','!','@','#','$','%','^','&','*','(',')','-','_','=','+']
+            if not any(char.isupper() for char in password):
+                success = False
+            if not any(char.islower() for char in password):
+                success = False
+            if not any(char.isdigit() for char in password):
+                success = False
+            if not success:
+                raise ValidationError('Passwords must include at least one uppercase character, one lowercase character, and a number.')
+
 def all_groups():
     return Group.query.order_by('name').all()
 
 def all_users():
     return User.query.order_by('username').all()
 
-class AddUserForm(FlaskForm):
-    username = StringField(f'Username{required}', validators=[DataRequired()])
-    password = PasswordField(f'Password{required}', validators=[DataRequired()])
+class UserEditForm(FlaskForm):
+    first_name = StringField(f'First Name{required}', validators=[DataRequired(), Length(max=100)])
+    last_name = StringField(f'Last Name{required}', validators=[DataRequired(), Length(max=100)])
+    email = StringField(f'Email{required}', validators=[Email(), DataRequired(), Length(max=100)])
+    phone = StringField('Phone Number', validators=[Optional(), Length(max=16, min=7)])
+    company = StringField('Company', validators=[Length(max=100)], description="<br /><br />")
+    current_password = PasswordField(f'Current Password', validators=[Optional(), Length(min=7, max=20)])
+    new_password = PasswordField('New Password')
     confirm_password = PasswordField(
-            f'Confirm Password{required}', 
-            validators=[DataRequired(), EqualTo('password')])
-    phone = StringField('Cellphone', validators=[
-            Regexp(r'^(?:\d{3}-)?\d{3}-\d{4}$', message="Invalid phone number"), 
-            Optional(),
-        ])
-    extension = IntegerField('Extension', validators=[Optional()])
-    email = StringField('Email', validators=[Email(), Optional()])
-    allergies = StringField('Allergies')
-    first_name = StringField(f'First Name{required}')
-    last_name = StringField(f'Last Name{required}')
-    avatar = SelectField('Avatar', coerce=str)
-    groups = QuerySelectMultipleField('Groups', query_factory=all_groups, allow_blank=True)
-    active = BooleanField('Active?')
-    submit = SubmitField('Add User')
+            f'Confirm Password', 
+            validators=[EqualTo('new_password')])
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=self.username.data).first()
+    def validate_email(self, email):
+        user = User.query.filter_by(email=self.email.data).first()
         if user is not None:
-            raise ValidationError('Username already in use.')
-        return True
+            if not user.id == current_user.id:
+                raise ValidationError('This email address is already in use.', 'danger')
 
-class EditUserForm(FlaskForm):
-    id = HiddenField()
-    username = StringField(f'Username{required}', validators=[DataRequired()])
-    #password = PasswordField(f'Current Password', validators=[Optional()])
-    #new_password = PasswordField('New Password')
-    #confirm_password = PasswordField(
-    #        f'Confirm Password', 
-    #        validators=[EqualTo('new_password')])
-    email = StringField('Email', validators=[Email(), Optional()])
-    #allergies = StringField('Allergies')
-    first_name = StringField(f'First Name{required}')
-    last_name = StringField(f'Last Name{required}')
-    avatar = SelectField('Avatar', coerce=str, validators=[Optional()])
-    groups = QuerySelectMultipleField('Groups', query_factory=all_groups, allow_blank=True)
-    #active = BooleanField('Active?')
-    submit = SubmitField('Update User')
-
-    def validate_username(self, username):
-        user = User.query.filter_by(username=self.username.data).first()
-        if user is not None:
-            if not user.id == int(self.id.data):
-                raise ValidationError('Username already in use.', 'danger')
-
-    def validate_password(self, password):
-        print(current_user.id)
+    def validate_current_password(self, current_password):
         user = User.query.filter_by(id=current_user.id).first()
-        if not user.check_password(self.password.data):
+        if not user.check_password(self.current_password.data):
             raise ValidationError('Your current password was incorrect.', 'danger')
-        if self.new_password.data != self.confirm_password.data:
-            raise ValidationError('Your new passwords don\'t match.', 'danger')
+
+    def validate_new_password(self, new_password):
+        if self.new_password.data and self.confirm_password.data:
+            if self.new_password.data != self.confirm_password.data:
+                raise ValidationError('Your new passwords don\'t match.', 'danger')
+        if self.new_password.data:
+            password = self.new_password.data
+            success = True
+            specials = ['~','!','@','#','$','%','^','&','*','(',')','-','_','=','+']
+            if not any(char.isupper() for char in password):
+                success = False
+            if not any(char.islower() for char in password):
+                success = False
+            if not any(char.isdigit() for char in password):
+                success = False
+            if not success:
+                raise ValidationError('Passwords must include at least one uppercase character, one lowercase character, and a number.')
         return True
 
 

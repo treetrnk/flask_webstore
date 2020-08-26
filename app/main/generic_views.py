@@ -76,7 +76,8 @@ class SaveObjView(MethodView):
 
     def set_object(self, obj_id, parent_id):
         current_app.logger.debug(f'Form: {self.form()}')
-        self.obj_id = obj_id
+        if not self.obj_id:
+            self.obj_id = obj_id
         if obj_id and self.model:
             self.obj = self.model.query.filter_by(id=obj_id).first()
         if parent_id:
@@ -167,10 +168,10 @@ class DeleteObjView(MethodView):
         pass
 
     def post(self, parent_id=None):
-        self.extra()
         self.form = self.form()
+        self.obj = self.model.query.filter_by(id=self.form.obj_id.data).first()
+        self.extra()
         if self.form.validate_on_submit():
-            self.obj = self.model.query.filter_by(id=self.form.obj_id.data).first()
             log_new(self.obj, self.log_msg)
             self.pre_post()
             db.session.delete(self.obj)

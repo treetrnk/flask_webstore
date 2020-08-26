@@ -9,18 +9,10 @@ from app import db
 from app.auth import bp
 from datetime import datetime
 from app.models import User, Group, Order 
-from app.auth.forms import LoginForm, EditUserForm, EditGroupForm, DeleteUserForm, DeleteGroupForm
+from app.auth.forms import LoginForm, UserEditForm, SignUpForm
 from app.auth.authenticators import group_required
-"""
-from app.auth.forms import (
-        LoginForm, AddUserForm, EditUserForm, AddGroupForm, EditPermissionForm,
-        DeleteGroupForm, DeletePermissionForm, EditContactForm, 
-        DeleteContactForm, DeleteUserForm
-    )
-"""
-from app.auth.emojis import emojis
 from app.functions import log_change, log_new
-from app.main.generic_views import ListView
+from app.main.generic_views import SaveObjView, DeleteObjView, ListView
 
 @bp.route("/login", methods=['GET', 'POST'])
 def login():
@@ -62,8 +54,8 @@ def login():
         if user.in_group('admin'):
             return redirect(url_for('admin.index'))
         else:
-            return redirect(url_for('main.index'))
-    form.remember_me.data = True
+            return redirect(url_for('auth.account'))
+    #form.remember_me.data = True
     return render_template('auth/login.html', title='Login', form=form, user='')
 
 @bp.route("/logout")
@@ -72,165 +64,80 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-@bp.route("/users")
-@bp.route("/users/inactive", defaults={'inactive': True}, endpoint="inactive_users")
+@bp.route('/sign-up', methods=['GET','POST'])
+def sign_up():
+    form = SignUpForm()
+    if form.validate_on_submit():
+        user = User()
+        form.populate_obj(obj=user)
+        user.set_password(form.new_password.data)
+        customer = Group.query.filter_by(name='customer').first()
+        if customer:
+            user.groups = [customer]
+        log_new(user, f'User added for email: {form.email.data}')
+        db.session.add(user)
+        db.session.commit()
+        login_user(user, remember=False)
+        flash('Thanks for creating an account!', 'success')
+        return redirect(url_for('shop.index'))
+    form.subscribed.data = True
+    return render_template('auth/login.html', title='Sign Up', form=form, user='')
+
+@bp.route('/account')
 @login_required
-def users(inactive=False):
-    current_app.logger.info(f'inactive: {inactive}')
-    users = User.query.filter_by(active=not inactive).order_by('last_name','first_name','username').all()
-    return render_template('auth/users.html', users=users, title='Users', inactive=inactive)
-
-#class UserView(ListView):
-#    def __init__(self, inactive=None):
-#        self.inactive = True if inactive == 'inactive' else False
-#        self.template_name = 'auth/users.html'
-#        if self.inactive:
-#            query_set = User.query.filter_by(active=False).order_by('last_name','first_name','username').all()
-#        else:
-#            query_set = User.query.filter_by(active=True).order_by('last_name','first_name','username').all()
-#        self.context = {'inactive': self.inactive, 'title': 'Users'}
-#
-#users_view = group_required('admin')(UserView.as_view('users'))
-#bp.add_url_rule("/users", view_func=users_view)
-#bp.add_url_rule("/users/<string:inactive>", view_func=users_view)
-#
-#@bp.route("/user/add", methods=['GET','POST'])
-#@group_required('admin')
-#def add_user():
-#    user = User()
-#    form = EditUserForm(obj=user())
-#    form.avatar.choices = emojis()
-#    if form.validate_on_submit():
-#        form.populate_obj(user)
-#        db.session.add(user)
-#        db.session.commit()
-#        log_new(user, 'added a user')
-#        flash('User added.', 'success')
-#        return redirect(url_for('auth.users'))
-#    form.active.data = True
-#    return render_template('auth/user-edit.html', 
-#            form=form,
-#            title='Users',
-#            action="Add",
-#        )
-
-@bp.route("/user/edit/<string:username>", methods=['GET','POST'])
-@group_required('admin')
-def edit_user(username):
-    user = User.query.filter_by(username=username).first()
-    form = EditUserForm(obj=user)
-    delete_form = DeleteUserForm()
-    form.avatar.choices = emojis()
-    if form.validate_on_submit():
-        log_orig = log_change(user)
-        user.groups = form.groups.data
-        log_change(log_orig, user, 'edited a user')
-        db.session.commit()
-        flash('User updated.', 'success')
-        return redirect(url_for('auth.users'))
-    delete_form.user_id.data = user.id
-    return render_template('auth/user-edit.html', 
-            user=user, 
-            form=form, 
-            title='Users',
-            action="Edit",
-            delete_form=delete_form,
+def account():
+    user = User.query.filter_by(id=current_user.id).first()
+    orders = Order.query.filter_by(user_id=user.id).all()
+    current_app.logger.debug(session)
+    return render_template('auth/index.html',
+            user=user,
+            orders=orders,
         )
 
-@bp.route("/user/delete", methods=['POST'])
-@group_required('admin')
-def delete_user():
-    form = DeleteUserForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(id=form.user_id.data).first()
-        log_new(user, f"deleted a user")
-        db.session.delete(user)
-        db.session.commit()
-        flash(f'The user has been deleted.', 'success') 
-    else:
-        log_new(user, f"FAILED to delete user")
-        flash('Failed to delete user!', 'danger') 
-        return redirect(url_for('auth.edit_user', username=username))
-    return redirect(url_for('auth.users'))
+class EditUser(SaveObjView):
+    title = "Edit Account"
+    model = User
+    form = UserEditForm
+    action = 'Edit'
+    log_msg = 'updated their account'
+    success_msg = 'Account updated.'
+    delete_endpoint = 'auth.delete_user'
+    template = 'object-edit.html'
+    redirect = {'endpoint': 'auth.account'}
 
-@bp.route("/groups")
-@group_required('admin')
-def groups():
-    groups = Group.query.all()
-    return render_template('auth/groups.html', groups=groups, title='Groups')
+    def extra(self):
+        self.obj_id = current_user.id
+        self.obj = User.query.filter_by(id=self.obj_id).first()
+        current_app.logger.debug(self.obj)
+        if not self.obj:
+            flash('It looks like your account no longer exists. Please create a new one.', 'warning')
+            return redirect(url_for('auth.sign_up'))
+        self.form = UserEditForm(obj=self.obj)
+        self.context.update({'form': self.form})
+        self.delete_form.obj_id.data = self.obj.id
+        self.context.update({'delete_form': self.delete_form})
 
-#class GroupView(ListView):
-#    def __init__(self, inactive=None):
-#        self.template_name = 'auth/groups.html'
-#        self.context = {'title': 'Groups'}
-#
-#    def get_objects(self):
-#        return Group.query.order_by('name').all()
-#
-#groups_view = group_required('admin')(GroupView.as_view('groups'))
-#bp.add_url_rule("/groups", view_func=groups_view)
+    def pre_post(self):
+        if self.form.current_password.data and self.form.new_password.data and self.form.current_password.data:
+            current_user.set_password(self.form.new_password.data)
 
-@bp.route("/group/add", methods=['GET','POST'])
-@group_required('webdev')
-def add_group():
-    form = EditGroupForm()
-    form.style.choices = Group.STYLE_CHOICES
-    if form.validate_on_submit():
-        group = Group(
-                name = form.name.data,
-                description = form.description.data,
-                style = form.style.data,
-            )
-        db.session.add(group)
-        db.session.commit()
-        log_new(group, 'added a group')
-        flash('Group added.', 'success')
-        return redirect(url_for('auth.groups'))
-    return render_template('auth/group-edit.html',
-            title='Add Group',
-            form=form,
-            action='Add',
-        )
+bp.add_url_rule("/account/edit", 
+        view_func=login_required(EditUser.as_view('edit_user')))
 
-@bp.route("/group/edit/<int:group_id>", methods=['GET','POST'])
-@group_required('webdev')
-def edit_group(group_id):
-    form = EditGroupForm()
-    delete_form = DeleteGroupForm()
-    form.style.choices = Group.STYLE_CHOICES
-    group = Group.query.filter_by(id=group_id).first()
-    if form.validate_on_submit():
-        log_orig = log_change(group)
-        group.name = form.name.data
-        group.description = form.description.data
-        group.style = form.style.data
-        log_change(log_orig, group, 'updated a group')
-        db.session.commit()
-        flash('Group updated.', 'success')
-        return redirect(url_for('auth.groups'))
-    form.name.data = group.name
-    form.description.data = group.description
-    form.style.data = group.style
-    delete_form.group_id.data = group.id
-    return render_template('auth/group-edit.html',
-            title='Edit Group',
-            form=form,
-            action='Edit',
-            group=group,
-            delete_form=delete_form,
-        )
+class DeleteUser(DeleteObjView):
+    model = User
+    log_msg = 'deleted their account'
+    success_msg = 'Account deleted.'
+    redirect = {'endpoint': 'main.index'}
 
-@bp.route("/group/delete", methods=['POST'])
-@group_required('webdev')
-def delete_group():
-    form = DeleteGroupForm()
-    if form.validate_on_submit():
-        group = Group.query.filter_by(id=form.group_id.data).first()
-        log_new(group, f"deleted a group")
-        db.session.delete(group)
-        db.session.commit()
-        flash(f'The group has been deleted.', 'success') 
-    else:
-        flash('Failed to delete group!', 'danger') 
-        return redirect(url_for('auth.edit_group', group_id=form.group_id.data))
-    return redirect(url_for('auth.groups'))
+    def extra(self):
+        self.obj_id = current_user.id
+        self.obj = User.query.filter_by(id=self.obj_id).first_or_404()
+
+    def post_post(self):
+        current_app.logger.info(f'{current_user.email} logged out.\n')
+        logout_user()
+
+bp.add_url_rule("/account/delete", 
+        view_func = login_required(DeleteUser.as_view('delete_user')))
+

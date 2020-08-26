@@ -28,6 +28,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), unique=True)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(100))
+    company = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
     avatar = db.Column(db.String(200), default='')
     password = db.Column(db.String(1000), default='webstore')
     groups = db.relationship('Group', secondary=groups, lazy='subquery',
