@@ -341,6 +341,15 @@ def orders():
             orders=orders, 
         )
 
+@bp.route('/admin/order/<int:obj_id>')
+@group_required('admin')
+def view_order(obj_id):
+    order = Order.query.filter_by(id=obj_id).first()
+    return render_template('admin/view-order.html',
+            tab='orders',
+            order=order,
+        )
+
 class AddOrder(SaveObjView):
     title = "Add Order"
     model = Order

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  {% include 'admin/nav.html' %}
+
+  <a href="{{ url_for('admin.edit_order', obj_id=order.id) }}" class="btn btn-primary float-right">
+    <i class="fas fa-edit"></i>
+    Edit Order
+  </a>
+
+  <h1>Order #{{ order.id }}</h1>
+
+  <h3 class="mt-4">Shipping To:</h3>
+
+  <p>
+    <b>
+      {{ order.shipping.full_name }}
+    </b><br />
+    {{ order.shipping.email }}<br />
+    {% if order.shipping.phone %}
+      {{ order.shipping.phone }}<br />
+    {% endif %}
+    {{ order.shipping.address_1 }}<br />
+    {% if order.shipping.address_2 %}
+      {{ order.shipping.address_2 }}<br />
+    {% endif %}
+    {{ order.shipping.city }},
+    {{ order.shipping.state }}<br />
+    {{ order.shipping.zipcode }}
+  </p>
+  
+  <h3 class="mt-4">Items</h3>
+	{% if order and order.items %}
+		
+		<table class="table" width="100%">
+			<thead>
+				<tr>
+					<th>Product</th>
+					<th></th>
+					<th width="75">Amount</th>
+					<th width="100">Price</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in order.items %}
+					<tr>
+						<td width="150">
+							<a href="{{ url_for('shop.product', obj_id=item.product_id) }}">
+								<img src="{{ url_for('main.uploads', filename=item.product.image_filename()) }}" class="img-fluid" />
+							</a>
+						</td>
+						<td>
+							<a href="{{ url_for('shop.product', obj_id=item.product_id) }}">
+								{{ item.product.name }} - {{ item.option.name }} 
+              </a><br />
+              <small class='text-muted'>
+                In stock: {{ item.option.available }}
+              </small>
+						</td>
+						<td class="text-center">
+              {{ item.amount }}
+						</td>
+						<td class="text-center">
+							${{ item.total_cost() }}
+						</td>
+					</tr>
+				{% endfor %}
+				<tr>
+					<td></td>
+					<td></td>
+					<td class="text-right"><b>Subtotal:</td>
+					<td class="text-center">${{ order.total_cost() }}</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+
+  {% endif %}
+
+{% endblock %}
