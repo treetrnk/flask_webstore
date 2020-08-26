@@ -185,7 +185,7 @@ def confirm():
         db.session.commit()
         msg = "Thank you for your order! We will begin working on it shortly."
         if current_user.is_authenticated:
-            msg += "Go to your <a href='" + url_for('profile.index') + "'>account page</a> to check on it's status."
+            msg += "Go to your <a href='" + url_for('auth.account') + "'>account page</a> to check on it's status."
         flash(msg, 'success')
         session['order_id'] = 0
         session['cart_item_count'] = 0
