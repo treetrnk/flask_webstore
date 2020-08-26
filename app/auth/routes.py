@@ -15,7 +15,8 @@ from app.functions import log_change, log_new
 from app.main.generic_views import SaveObjView, DeleteObjView, ListView
 
 @bp.route("/login", methods=['GET', 'POST'])
-def login():
+@bp.route("/login/<string:checkout>", methods=['GET', 'POST'])
+def login(checkout=''):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -24,15 +25,15 @@ def login():
         if user is None:
             flash(f'User with email <b>{form.email.data}</b> does not exist!', 'danger')
             current_app.logger.warning(f'Permissions Warning: Failed login attempt non-existant user {form.email.data}.\n')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login', checkout=checkout))
         if not user.active:
             flash('Cannot login. Your account has been deactivated. Please speak with your supervisor to gain login privileges.', 'danger')
             current_app.logger.warning(f'Permissions Warning: Failed login for inactive user {form.email.data}.\n')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login', checkout=checkout))
         if not user.check_password(form.password.data):
             flash('Invalid email or password!', 'danger')
             current_app.logger.warning(f'Permissions Warning: Failed login attempt for user {form.email.data}.\n')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login', checkout=checkout))
         current_app.logger.info(f'{user.email} logged in.\n')
         current_app.logger.info(f'Remember {user.email} login? ' + str(form.remember_me.data) + '.\n')
         login_user(user, remember=form.remember_me.data)
@@ -54,9 +55,11 @@ def login():
         if user.in_group('admin'):
             return redirect(url_for('admin.index'))
         else:
+            if checkout == 'checkout':
+                return redirect(url_for('shop.shipping'))
             return redirect(url_for('auth.account'))
     #form.remember_me.data = True
-    return render_template('auth/login.html', title='Login', form=form, user='')
+    return render_template('auth/login.html', title='Login', form=form, user='', checkout=checkout)
 
 @bp.route("/logout")
 def logout():
@@ -65,7 +68,8 @@ def logout():
     return redirect(url_for('main.index'))
 
 @bp.route('/sign-up', methods=['GET','POST'])
-def sign_up():
+@bp.route('/sign-up/<string:checkout>', methods=['GET','POST'])
+def sign_up(checkout=''):
     form = SignUpForm()
     if form.validate_on_submit():
         user = User()
@@ -79,9 +83,11 @@ def sign_up():
         db.session.commit()
         login_user(user, remember=False)
         flash('Thanks for creating an account!', 'success')
+        if checkout == 'checkout':
+            return redirect(url_for('shop.shipping'))
         return redirect(url_for('shop.index'))
     form.subscribed.data = True
-    return render_template('auth/login.html', title='Sign Up', form=form, user='')
+    return render_template('auth/login.html', title='Sign Up', form=form, user='', checkout=checkout)
 
 @bp.route('/account')
 @login_required

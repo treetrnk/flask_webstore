@@ -165,10 +165,43 @@ def shipping():
         db.session.commit()
         return redirect(url_for('shop.confirm'))
     form.state.data='Pennsylvania'
+    if current_user.is_authenticated:
+        if current_user.first_name and current_user.last_name:
+            form.full_name.data = f'{current_user.first_name} {current_user.last_name}'
+        if current_user.email:
+            form.email.data = current_user.email
+        if current_user.phone:
+            form.phone.data = current_user.phone
     return render_template('shop/shipping.html',
             form=form,
             order=order,
         )
+
+class EditShipping(SaveObjView):
+    title = "Edit Shipping"
+    model = Information
+    form = ShippingForm
+    action = 'Edit'
+    log_msg = 'updated shipping information'
+    success_msg = 'Shipping information updated.'
+    delete_endpoint = 'shop.shipping'
+    template = 'shop/shipping.html'
+    redirect = {'endpoint': 'shop.confirm'}
+
+    def extra(self):
+        order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+        self.obj_id = order.shipping_id
+        self.obj = Information.query.filter_by(id=self.obj_id).first()
+        current_app.logger.debug(self.obj)
+        if not self.obj:
+            flash("It looks like your shipping information doesn't exist. Please try again.", 'warning')
+            return redirect(url_for('shop.shipping'))
+        self.form = ShippingForm(obj=self.obj)
+        self.form.state.choices = Information.STATE_CHOICES
+        self.context.update({'form': self.form})
+
+bp.add_url_rule("/cart/shipping/edit", 
+        view_func=EditShipping.as_view('edit_shipping'))
 
 @bp.route('/cart/confirm', methods=['GET','POST'])
 def confirm():
@@ -185,7 +218,7 @@ def confirm():
         db.session.commit()
         msg = "Thank you for your order! We will begin working on it shortly."
         if current_user.is_authenticated:
-            msg += "Go to your <a href='" + url_for('auth.account') + "'>account page</a> to check on it's status."
+            msg += " Go to your <a href='" + url_for('auth.account') + "'>account page</a> to check on its status."
         flash(msg, 'success')
         session['order_id'] = 0
         session['cart_item_count'] = 0

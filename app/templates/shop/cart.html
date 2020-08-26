@@ -86,7 +86,11 @@
         <i class="fas fa-seedling"></i>
         Continue Shopping
       </a>
-      <a href="{{ url_for('shop.shipping') }}" class="btn btn-primary">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('shop.shipping') }}" class="btn btn-primary">
+      {% else %}
+        <a href="{{ url_for('auth.sign_up', checkout='checkout') }}" class="btn btn-primary">
+      {% endif %}
         <i class="fas fa-shopping-bag"></i>
         Checkout
       </a>

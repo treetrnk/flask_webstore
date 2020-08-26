@@ -16,6 +16,24 @@
 				payments to @treetrnk or cash.
 			</p>
 
+      <h3>Shipping To:</h3>
+      <p>
+        <b>
+          {{ order.shipping.full_name }}
+        </b><br />
+        {{ order.shipping.email }}<br />
+        {% if order.shipping.phone %}
+          {{ order.shipping.phone }}<br />
+        {% endif %}
+        {{ order.shipping.address_1 }}<br />
+        {% if order.shipping.address_2 %}
+          {{ order.shipping.address_2 }}<br />
+        {% endif %}
+        {{ order.shipping.city }},
+        {{ order.shipping.state }}<br />
+        {{ order.shipping.zipcode }}
+      </p>
+
 			<h3>Items</h3>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
 				<tr style="border-bottom: 1px solid #666;">

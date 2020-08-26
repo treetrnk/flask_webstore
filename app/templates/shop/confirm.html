@@ -21,6 +21,11 @@
     {{ order.shipping.state }}<br />
     {{ order.shipping.zipcode }}
   </p>
+  
+  <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
+    <i class="fas fa-cogs"></i>
+    Edit Shipping
+  </a>
 
   <h3 class="mt-4">Items</h3>
 	{% if order and order.items %}

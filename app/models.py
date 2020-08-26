@@ -561,10 +561,10 @@ class Information(db.Model):
         )
 
     def __repr__(self):
-        return f'Item({self.id}, (order #{self.order_id})'
+        return f'Information({self.id} ({self.type})'
 
     def __str__(self):
-        return f'Item #{self.id}'
+        return f'Information #{self.id}'
 
 #############
 ## PAGE #####################################################################
