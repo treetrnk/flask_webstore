@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import (
         HiddenField, IntegerField, StringField, SelectField
     )
-from wtforms.validators import DataRequired, NumberRange, Length, Email, Optional
+from wtforms.validators import DataRequired, NumberRange, Length, Email, Optional, ValidationError
 
 required = " *"
 
@@ -27,6 +27,24 @@ class ShippingForm(FlaskForm):
     city = StringField(f'City{required}', validators=[DataRequired(), Length(max=100)])
     state = SelectField(f'State{required}', validators=[DataRequired(), Length(max=100)])
     zipcode = StringField(f'Zip Code{required}', validators=[DataRequired(), Length(min=5, max=5)])
+
+    def validate_state(self, state):
+        if self.state.data.lower() != 'pennsylvania':
+            raise ValidationError('We are currently only delivering locations in Lancaster, Pennsylvania.')
+
+    def validate_zipcode(self, zipcode):
+        accepted_zipcodes = [
+                '17601', # North Lancaster
+                '17602', # East Lancaster
+                '17603', # West Lancaster
+                '17554', # Mountville
+                '17520', # East Petersburg
+                '17576', # Smoketown
+                #'17584', # Willow Street
+                #'17551', # Millersville
+            ]
+        if self.zipcode.data not in accepted_zipcodes:
+            raise ValidationError('We are currently only delivering to the following zipcodes: ' + ', '.join(accepted_zipcodes))
 
 class ConfirmForm(FlaskForm):
     status = HiddenField('status')
