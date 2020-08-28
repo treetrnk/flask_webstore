@@ -404,6 +404,7 @@ class Order(db.Model):
     billing_id = db.Column(db.Integer, db.ForeignKey('information.id'))
     billing = db.relationship('Information', foreign_keys=billing_id, 
             backref='billing_orders', lazy=True)
+    payment_id = db.Column(db.String(200))
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 

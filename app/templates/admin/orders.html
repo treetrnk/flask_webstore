@@ -18,6 +18,7 @@
       <th>Items</th>
       <th>Total</th>
       <th>Shipping</th>
+      <th>Payment</th>
       <th>Status</th>
       <th>Created</th>
     </tr>
@@ -53,6 +54,13 @@
         <td>
           {% if order.shipping %}
             {{ order.shipping.address_1 }}
+          {% endif %}
+        </td>
+        <td>
+          {% if order.payment_id %}
+            <a href="https://dashboard.stripe.com/{% if config.get('DEVELOPMENT') %}test/{% endif %}payments/{{ order.payment_id }}" target='_blank'>
+              {{ order.payment_id }}
+            </a>
           {% endif %}
         </td>
         <td>

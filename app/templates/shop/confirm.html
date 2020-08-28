@@ -1,32 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
 
+  <script src="https://js.stripe.com/v3/"></script>
+
   <h1>Confirm Your Order</h1>
 
   <h3 class="mt-4">Shipping To:</h3>
 
-  <p>
-    <b>
-      {{ order.shipping.full_name }}
-    </b><br />
-    {{ order.shipping.email }}<br />
-    {% if order.shipping.phone %}
-      {{ order.shipping.phone }}<br />
-    {% endif %}
-    {{ order.shipping.address_1 }}<br />
-    {% if order.shipping.address_2 %}
-      {{ order.shipping.address_2 }}<br />
-    {% endif %}
-    {{ order.shipping.city }},
-    {{ order.shipping.state }}<br />
-    {{ order.shipping.zipcode }}
-  </p>
-  
-  <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
-    <i class="fas fa-cogs"></i>
-    Edit Shipping
-  </a>
+  <div class="row">
+    <div class="col-md-4 col-12 mb-3">
+      <p>
+        <b>
+          {{ order.shipping.full_name }}
+        </b><br />
+        {{ order.shipping.email }}<br />
+        {% if order.shipping.phone %}
+          {{ order.shipping.phone }}<br />
+        {% endif %}
+        {{ order.shipping.address_1 }}<br />
+        {% if order.shipping.address_2 %}
+          {{ order.shipping.address_2 }}<br />
+        {% endif %}
+        {{ order.shipping.city }},
+        {{ order.shipping.state }}<br />
+        {{ order.shipping.zipcode }}
+      </p>
+      <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-cogs"></i>
+        Edit Shipping
+      </a>
 
+    </div>
+    <div class="col">
+
+      <div class="alert alert-info">
+        <b>
+          <i class="fas fa-info-circle"></i>
+          Thursday Deliveries:
+        </b>
+        We currently do deliveries on Thursday evenings. If you have a special request, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we will try to find a solution.
+      </div>
+
+    </div>
+  </div>
+  
   <h3 class="mt-4">Items</h3>
 	{% if order and order.items %}
 		
@@ -68,34 +85,61 @@
 					<td></td>
 					<td class="text-right"><b>Subtotal:</td>
 					<td class="text-center">${{ order.total_cost() }}</td>
-					<td></td>
 				</tr>
 			</tbody>
 		</table>
 
   {% endif %}
 
-  <div class="alert alert-info">
-    <b>
-      <i class="fas fa-info-circle"></i>
-      Thursday Deliveries:
-    </b>
-    We currently do deliveries on Thursday evenings. If you have a special request, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we will try to find a solution.
-  </div>
 
-  <div class="text-right">
-    <form action="" method="post">
-      {{ form.hidden_tag() }}
-      <a href="{{ url_for('shop.cart') }}" class="btn btn-secondary">
-        <i class="fas fa-shopping-cart"></i>
-        Back to Cart
-      </a>
-      <button type="submit" class="btn btn-primary">
-        <i class="fas fa-check-circle"></i>
-        Confirm Order
-      </button>
-    </form>
-  </div>
+  <h3>Payment</h3>
+
+  <form action="" method="post" id="payment-form">
+    <div class="row my-3">
+      <div class="col-md-6 col-12">
+        <label class="control-label">Credit Card</label>
+        <div  class="form-control p-2">
+          <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+        </div>
+      </div>
+    </div>
+
+      <div>
+        <button type="submit" class="btn btn-primary text-center">
+          <i class="fas fa-check-circle" id="spinner"></i>
+          <span id='button-text'>
+            Pay & Confirm Order
+          </span>
+        </button>
+        <a href="{{ url_for('shop.cart') }}" class="btn btn-secondary">
+          <i class="fas fa-shopping-cart"></i>
+          Back to Cart
+        </a>
+        <p id="card-error" role="alert"></p>
+        <p class="result-message hidden">
+        </p>
+      </div>
+  </form>
+
+  <form action="" method="post" id="confirm-form">
+    {{ form.hidden_tag() }}
+  </form>
+
+  <script type="text/javascript">
+    var stripe = Stripe("{{ config.get('STRIPE_PUBLISHABLE') }}");
+    
+    var purchases = {
+      items: [
+        {% for item in order.items %}
+          {  
+            id: "{{ item.option_id }}",
+            name: "{{ item.option.product.name }} - {{ item.option.name }}",
+            quantity: {{ item.amount }}
+          }
+        {% endfor %}
+      ]
+    };
+  </script>
 
 {% endblock %}
 

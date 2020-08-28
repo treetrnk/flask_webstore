@@ -1,5 +1,7 @@
 import os
 import re
+import stripe
+import json
 from flask import Blueprint, render_template, url_for, redirect, flash, current_app, send_from_directory, request, session, jsonify
 from app.shop import bp
 from app import db
@@ -15,6 +17,7 @@ from app.shop.forms import AddToCartForm, CartUpdateForm, ShippingForm, ConfirmF
 from app.models import (
         Product, Category, Order, Item, Option, Information
     )
+
 
 @bp.route('/shop')
 @bp.route('/shop/<string:category>')
@@ -203,6 +206,26 @@ class EditShipping(SaveObjView):
 bp.add_url_rule("/cart/shipping/edit", 
         view_func=EditShipping.as_view('edit_shipping'))
 
+@bp.route('/cart/create-payment', methods=['POST'])
+def create_payment():
+    order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+    stripe.api_key = current_app.config.get('STRIPE_SECRET')
+    if order and order.total_cost() > 0:
+        try:
+            current_app.logger.debug(request.data)
+            data = json.loads(request.data)
+            intent = stripe.PaymentIntent.create(
+                    amount=int(order.total_cost() * 100),
+                    currency='usd'
+                )
+            return jsonify({
+                'clientSecret': intent['client_secret']
+            })
+        except Exception as e:
+            return jsonify(error=str(e)), 403
+    flash('Unable to create payment. There are no items in your cart.')
+    return redirect(url_for('shop.cart'))
+
 @bp.route('/cart/confirm', methods=['GET','POST'])
 def confirm():
     order = Order.query.filter_by(id=session.get('order_id')).first()
@@ -213,6 +236,7 @@ def confirm():
         return redirect(url_for('shop.shipping'))
     if form.validate_on_submit():
         order.status = 'Confirmed'
+        order.payment_id = form.payment_id.data
         for item in order.items:
             item.option.available -= item.amount
         db.session.commit()
@@ -227,4 +251,5 @@ def confirm():
     return render_template('shop/confirm.html',
             form=form,
             order=order,
+            js='stripe-client.js'
         )

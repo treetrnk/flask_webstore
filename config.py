@@ -47,3 +47,6 @@ class Config(object):
     ADMINS = ADMINS.split()
     COMPANY_NAME = os.environ.get('COMPANY_NAME') or 'Webstore'
     COMPANY_TAGLINE = os.environ.get('COMPANY_TAGLINE') or COMPANY_NAME
+    STRIPE_PUBLISHABLE = os.environ.get('STRIPE_PUBLISHABLE') or ''
+    STRIPE_SECRET = os.environ.get('STRIPE_SECRET') or ''
+    STRIPE_WEBHOOK = os.environ.get('STRIPE_WEBHOOK') or ''
