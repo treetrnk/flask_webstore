@@ -8,13 +8,15 @@
 
 			<p>
 				Thank you for your order! We will begin working on it right away. If you
-				have any questions or concerns, please email us at <a href="mailto:{{ config.get('MAIL_USERNAME') }}">{{config.get('MAIL_USERNAME') }}</a>.
+				have any questions or concerns, please email us at 
+        <a href="mailto:{{ config.get('MAIL_USERNAME') }}">{{config.get('MAIL_USERNAME') }}</a>.
 			</p>
 			<p>
-				Please note, we currently do deliveries on Thursday evenings. Payment
-				is expected in full at the time of delivery. We currently accept venmo 
-				payments to @treetrnk or cash.
-			</p>
+        Please note, we currently do deliveries on Thursday evenings. If you're item is 
+        temperature-sensitive and you are not available at that time, please 
+        <a href='mailto:{{ config.get('MAIL_USERNAME') }}'>email us</a> and we'll work 
+        out a solution.
+      </p>
 
       <h3>Shipping To:</h3>
       <p>
