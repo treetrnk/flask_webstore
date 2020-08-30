@@ -1,11 +1,15 @@
 .jumbotron {
   color: #fff;
-  background-size: cover;
-  background: linear-gradient(rgba(0, 0, 0, 0.35),rgba(0,0,0,0.35)), url('/static/images/jumbotron-bg.jpg');
+  background-size: cover !important;
+  background: url('/static/images/jumbotron-bg.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
   border-radius: 0px;
 }
 .jumbotron h1, .jumbotron p {
-	text-shadow: 0px 0px 3px #000;
-  color: #fff;
+	/*
+   * text-shadow: 0px 0px 6px #fff;
+   */
+  color: #333;
   text-transform: none;
 }
