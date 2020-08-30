@@ -229,7 +229,7 @@ def create_payment():
 @bp.route('/cart/confirm', methods=['GET','POST'])
 def confirm():
     order = Order.query.filter_by(id=session.get('order_id')).first()
-    if order.status != 'Incomplete':
+    if not order or order.status != 'Incomplete':
         return redirect(url_for('shop.index'))
     form = ConfirmForm(obj=order)
     if not order.shipping:
