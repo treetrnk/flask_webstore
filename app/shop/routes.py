@@ -207,6 +207,7 @@ bp.add_url_rule("/cart/shipping/edit",
         view_func=EditShipping.as_view('edit_shipping'))
 
 @bp.route('/cart/create-payment', methods=['POST'])
+# @group_required('admin') # DISABLE UNTIL NEEDED
 def create_payment():
     order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
     stripe.api_key = current_app.config.get('STRIPE_SECRET')
@@ -228,7 +229,9 @@ def create_payment():
 
 @bp.route('/cart/confirm', methods=['GET','POST'])
 def confirm():
-    order = Order.query.filter_by(id=session.get('order_id')).first()
+    order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+    if not order and current_user.is_authenticated:
+        order = Order.query.filter_by(user_id=current_user.id, status="Incomplete").first()
     if not order or order.status != 'Incomplete':
         return redirect(url_for('shop.index'))
     form = ConfirmForm(obj=order)
