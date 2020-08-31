@@ -99,8 +99,10 @@
 	{% else %}
 		<p>
 			Nothing here yet. Head over to the 
-      <a href="{{ url_for('shop.index') }}">shop</a> to add some items, or 
-      <a href="{{ url_for('auth.login') }}">log in</a> to recover a previous cart.
+      <a href="{{ url_for('shop.index') }}">shop</a> to add some items.
+      {% if not current_user.is_authenticated %}
+        Or <a href="{{ url_for('auth.login') }}">log in</a> to recover a previous cart.
+      {% endif %}
 		</p>
 	{% endif %}
 
