@@ -8,26 +8,53 @@
     Edit Order
   </a>
 
-  <h1>Order #{{ order.id }}</h1>
+  <h1>
+    Order #{{ order.id }}
+  </h1>
+  <span>
+    Status:
+    <span class="badge badge-{{ order.status_class() }}">
+      {{ order.status }}
+    </span>
+  </span>
 
-  <h3 class="mt-4">Shipping To:</h3>
 
-  <p>
-    <b>
-      {{ order.shipping.full_name }}
-    </b><br />
-    {{ order.shipping.email }}<br />
-    {% if order.shipping.phone %}
-      {{ order.shipping.phone }}<br />
-    {% endif %}
-    {{ order.shipping.address_1 }}<br />
-    {% if order.shipping.address_2 %}
-      {{ order.shipping.address_2 }}<br />
-    {% endif %}
-    {{ order.shipping.city }},
-    {{ order.shipping.state }}<br />
-    {{ order.shipping.zipcode }}
-  </p>
+  <div class="row mt-3">
+    <div class="col-12 col-md">
+      <h3>Shipping</h3>
+      <p>
+        <b>
+          {{ order.shipping.full_name }}
+        </b><br />
+        {{ order.shipping.email }}<br />
+        {% if order.shipping.phone %}
+          {{ order.shipping.phone }}<br />
+        {% endif %}
+        {{ order.shipping.address_1 }}<br />
+        {% if order.shipping.address_2 %}
+          {{ order.shipping.address_2 }}<br />
+        {% endif %}
+        {{ order.shipping.city }},
+        {{ order.shipping.state }}<br />
+        {{ order.shipping.zipcode }}
+      </p>
+    </div>
+
+    <div class="col-12 col-md">
+      <h3>Payment</h3>
+      {% if order.payment_id %}
+        <i class="fas fa-credit-card"></i>
+        <b>Credit Card</b><br />
+        Payment ID: 
+        <a href="https://dashboard.stripe.com/{% if config.get('DEVELOPMENT') %}test/{% endif %}payments/{{ order.payment_id }}" target='_blank'>
+          {{ order.payment_id }}
+        </a>
+      {% else %}
+        <p>No payment received.</p>
+        <div class="
+      {% endif %}
+    </div>
+  </div>
   
   <h3 class="mt-4">Items</h3>
 	{% if order and order.items %}

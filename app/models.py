@@ -405,6 +405,8 @@ class Order(db.Model):
     billing = db.relationship('Information', foreign_keys=billing_id, 
             backref='billing_orders', lazy=True)
     payment_id = db.Column(db.String(200))
+    payment_type = db.Column(db.String(100))
+    paid = db.Column(db.Boolean)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
@@ -415,6 +417,13 @@ class Order(db.Model):
         for item in self.items:
             total += item.amount
         return total
+
+    def status_class(self):
+        if self.status == 'Incomplete':
+            return 'warning'
+        elif self.status == 'Complete':
+            return 'success'
+        return 'primary'
 
     def total_cost(self):
         total = 0.0

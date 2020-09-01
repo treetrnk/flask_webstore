@@ -64,7 +64,9 @@
           {% endif %}
         </td>
         <td>
-          {{ order.status }}
+          <span class="badge badge-{{ order.status_class() }}">
+            {{ order.status }}
+          </span>
         </td>
         <td>
           {{ order.created }}
