@@ -19,6 +19,7 @@ class RemoveItemForm(FlaskForm):
     option_id = HiddenField('option id', validators=[DataRequired()])
 
 class ShippingForm(FlaskForm):
+    parent_id = HiddenField('order id')
     full_name = StringField(f'Full Name{required}', validators=[DataRequired(), Length(max=150)])
     email = StringField(f'Email{required}', validators=[DataRequired(), Length(max=150), Email()])
     phone = StringField('Phone', validators=[Length(min=10, max=12), Optional()])

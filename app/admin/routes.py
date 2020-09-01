@@ -14,9 +14,10 @@ from app.admin.forms import (
         UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
         PageEditForm, OptionEditForm, OrderEditForm,
     )
+from app.shop.forms import ShippingForm
 from app.admin.functions import save_file, delete_file
 from app.models import (
-        User, Group, Category, Product, Setting, Page, Option, Order,
+        User, Group, Category, Product, Setting, Page, Option, Order, Information
     )
 
 @bp.route('/admin')
@@ -388,6 +389,59 @@ class DeleteOrder(DeleteObjView):
 
 bp.add_url_rule("/admin/order/delete", 
         view_func = group_required('admin')(DeleteOrder.as_view('delete_order')))
+
+#################
+## INFORMATION ################################################################
+#################
+
+class AddInformation(SaveObjView):
+    title = "Add Information"
+    model = Information
+    form = ShippingForm
+    action = 'Add'
+    log_msg = 'added information'
+    success_msg = 'Information added.'
+    delete_endpoint = 'admin.delete_information'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.orders'}
+    context = {'tab': 'orders'}
+
+bp.add_url_rule("/admin/information/add", 
+        view_func=group_required('admin')(AddInformation.as_view('add_information')))
+
+class EditInformation(SaveObjView):
+    title = "Edit Information"
+    model = Information
+    form = ShippingForm
+    action = 'Edit'
+    log_msg = 'updated information'
+    success_msg = 'Information updated.'
+    delete_endpoint = 'admin.delete_information'
+    template = 'admin/object-edit.html'
+    redirect = {'endpoint': 'admin.orders'}
+    context = {'tab': 'orders'}
+
+    def extra(self):
+        self.form.state.choices = Information.STATE_CHOICES
+        if self.parent_id:
+            self.form.parent_id.data = self.parent_id
+        if self.form.parent_id.data:
+            self.redirect = {'endpoint': 'admin.view_order', 'obj_id': self.form.parent_id.data}
+        self.context.update({'form': self.form, 'redirect': self.redirect})
+
+bp.add_url_rule("/admin/order/<int:parent_id>/information/edit/<int:obj_id>", 
+        view_func=group_required('admin')(EditInformation.as_view('edit_order_information')))
+bp.add_url_rule("/admin/order/information/edit/<int:obj_id>", 
+        view_func=group_required('admin')(EditInformation.as_view('edit_information')))
+
+class DeleteInformation(DeleteObjView):
+    model = Information
+    log_msg = 'deleted information'
+    success_msg = 'Information deleted.'
+    redirect = {'endpoint': 'admin.orders'}
+
+bp.add_url_rule("/admin/information/delete", 
+        view_func = group_required('admin')(DeleteInformation.as_view('delete_information')))
 
 ##########
 ## PAGE ################################################################

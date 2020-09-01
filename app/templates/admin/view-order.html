@@ -10,13 +10,10 @@
 
   <h1>
     Order #{{ order.id }}
-  </h1>
-  <span>
-    Status:
-    <span class="badge badge-{{ order.status_class() }}">
+    <small class="badge badge-{{ order.status_class() }}">
       {{ order.status }}
-    </span>
-  </span>
+    </small>
+  </h1>
 
 
   <div class="row mt-3">
@@ -38,6 +35,10 @@
         {{ order.shipping.state }}<br />
         {{ order.shipping.zipcode }}
       </p>
+      <a href="{{ url_for('admin.edit_order_information', obj_id=order.shipping_id, parent_id=order.id) }}" class="btn btn-sm btn-secondary">
+        <i class="fas fa-cogs"></i>
+        Edit Shipping
+      </a>
     </div>
 
     <div class="col-12 col-md">
@@ -51,7 +52,9 @@
         </a>
       {% else %}
         <p>No payment received.</p>
-        <div class="
+        <div class="">
+
+        </div>
       {% endif %}
     </div>
   </div>
