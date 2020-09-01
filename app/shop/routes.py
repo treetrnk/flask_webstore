@@ -269,7 +269,7 @@ def select_order(obj_id):
         return redirect('auth.account')
     session['order_id'] = obj_id
     session['cart_item_count'] = order.total_items()
-    return redirect('auth.account')
+    return redirect(url_for('auth.account'))
 
 class DeleteOrder(DeleteObjView):
     model = Order
