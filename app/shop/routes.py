@@ -256,3 +256,38 @@ def confirm():
             order=order,
             js='stripe-client.js'
         )
+
+@bp.route('/cart/select-order/<int:obj_id>')
+@login_required
+def select_order(obj_id):
+    order = Order.query.filter_by(id=obj_id, status='Incomplete')
+    if not current_user.in_group('admin'):
+        order = order.filter_by(user_id=current_user.id)
+    order = order.first()
+    if not order:
+        flash('Failed to select the requested cart.', 'warning')
+        return redirect('auth.account')
+    session['order_id'] = obj_id
+    session['cart_item_count'] = order.total_items()
+    return redirect('auth.account')
+
+class DeleteOrder(DeleteObjView):
+    model = Order
+    log_msg = 'deleted an order'
+    success_msg = 'Order deleted.'
+    redirect = {'endpoint': 'auth.account'}
+
+    def pre_post(self):
+        """ 
+        # DELETE CART WHEN DELETING LAST ITEM
+        if self.obj.order.total_items(unique=True) < 2:
+            log_new(self.obj.order, 'Order deleted')
+            db.session.delete(self.obj.order)
+        """
+        if self.obj.user_id != current_user.id:
+            flash('Unable to delete order.', 'warning')
+            return redirect(url_for('auth.account'))
+
+bp.add_url_rule("/cart/order/delete", 
+        view_func = login_required(DeleteOrder.as_view('delete_order')))
+
