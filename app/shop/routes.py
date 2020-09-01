@@ -284,7 +284,7 @@ class DeleteOrder(DeleteObjView):
             log_new(self.obj.order, 'Order deleted')
             db.session.delete(self.obj.order)
         """
-        if self.obj.user_id != current_user.id:
+        if self.obj.user_id != current_user.id or self.obj.status != 'Incomplete':
             flash('Unable to delete order.', 'warning')
             return redirect(url_for('auth.account'))
         if session.get('order_id') == self.obj.id:
