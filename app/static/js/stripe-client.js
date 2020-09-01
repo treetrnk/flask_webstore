@@ -25,8 +25,8 @@ function toggle_submit(action='') {
 
 $(document).ready(function() {
 
+  /*-------- Payment Option Toggle -----------*/
   $('.payment-option-btn').click(function() {
-    
     var $this = $(this);
     var target = $($this.data('target'));    
 
@@ -41,9 +41,9 @@ $(document).ready(function() {
     });
     //target.show();
     target.slideDown();
-
   });
 
+  /*----- Begin Stripe Handling -----*/
   toggle_submit('disable');
   fetch("/cart/create-payment", {
     method: "POST",
@@ -82,12 +82,14 @@ $(document).ready(function() {
     card.on("change", function (event) {
       // Disable the Pay button if there are no card details in the Element
       toggle_submit(event.empty ? 'disable' : 'enable');
+      console.log('card change');
       $('#card-error').text(event.error ? event.error.message : '');
     });
 
     var form = $('#payment-form');
     form.submit(function(event) {
       event.preventDefault();
+      console.log('Prevent submit');
       payWithCard(stripe, card, data.clientSecret);
     });
   });
@@ -97,6 +99,7 @@ $(document).ready(function() {
   // prompt the user to enter authentication details without leaving your page.
   var payWithCard = function(stripe, card, clientSecret) {
     loading(true);
+    console.log('paying');
     stripe
       .confirmCardPayment(clientSecret, {
         payment_method: {
@@ -129,9 +132,9 @@ $(document).ready(function() {
   var showError = function(errorMsgText) {
     loading(false);
     var errorMsg = $('#card-error');
-    errorMsg.textContent = errorMsgText;
+    errorMsg.text(errorMsgText);
     setTimeout(function() {
-      errorMsg.textContent = '';
+      errorMsg.text('');
     }, 4000);
   };
 
