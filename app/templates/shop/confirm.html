@@ -94,21 +94,63 @@
 
   <h3>Payment</h3>
 
-  <form action="" method="post" id="payment-form">
-    <div class="row my-3">
-      <div class="col-md-6 col-12">
-        <label class="control-label">Credit Card</label>
-        <div  class="form-control p-2">
-          <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+  <div class="btn-group mb-3">
+    <button type="button" class="btn btn-outline-secondary active payment-option-btn" data-target="#pay-now">
+      Pay Now
+    </button>
+    <button type="button" class="btn btn-outline-secondary payment-option-btn" data-target="#pay-delivery">
+      Pay On Delivery
+    </button>
+  </div>
+
+  <div id="pay-now" class="payment-option-div"
+    <form action="" method="post" id="payment-form">
+      <div class="row my-3">
+        <div class="col-md-6 col-12">
+          <label class="control-label">Credit Card</label>
+          <div  class="form-control p-2">
+            <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+          </div>
         </div>
       </div>
-    </div>
+
+        <div>
+          <button type="submit" class="btn btn-primary text-center">
+            <i class="fas fa-check-circle" id="spinner"></i>
+            <span id='button-text'>
+              Pay & Confirm Order
+            </span>
+          </button>
+          <a href="{{ url_for('shop.cart') }}" class="btn btn-secondary">
+            <i class="fas fa-shopping-cart"></i>
+            Back to Cart
+          </a>
+          <p id="card-error" role="alert"></p>
+          <p class="result-message hidden">
+          </p>
+        </div>
+    </form>
+
+    <form action="" method="post" id="confirm-form">
+      {{ form.csrf_token }}
+      {{ form.payment_id(required='required') }}
+    </form>
+  </div>
+
+  <div id="pay-delivery" class="payment-option-div" style="display: none;">
+    <form action="" method="post" id="confirm-form">
+      {{ form.hidden_tag() }}
+
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        Payment will be expected when your order is delivered. We only accept cash and check at the moment. If paying with cash, please have exact change.
+      </div>
 
       <div>
         <button type="submit" class="btn btn-primary text-center">
           <i class="fas fa-check-circle" id="spinner"></i>
           <span id='button-text'>
-            Pay & Confirm Order
+            Confirm Order
           </span>
         </button>
         <a href="{{ url_for('shop.cart') }}" class="btn btn-secondary">
@@ -119,11 +161,10 @@
         <p class="result-message hidden">
         </p>
       </div>
-  </form>
 
-  <form action="" method="post" id="confirm-form">
-    {{ form.hidden_tag() }}
-  </form>
+    </form>
+    
+  </div>
 
   <script type="text/javascript">
     var stripe = Stripe("{{ config.get('STRIPE_PUBLISHABLE') }}");

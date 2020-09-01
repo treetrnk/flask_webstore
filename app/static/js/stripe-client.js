@@ -25,6 +25,25 @@ function toggle_submit(action='') {
 
 $(document).ready(function() {
 
+  $('.payment-option-btn').click(function() {
+    
+    var $this = $(this);
+    var target = $($this.data('target'));    
+
+    $('.payment-option-btn').each(function() {
+      $(this).removeClass('active');
+    });
+    $this.addClass('active');
+
+    $('.payment-option-div').each(function() {
+      $(this).slideUp();
+      //$(this).hide();
+    });
+    //target.show();
+    target.slideDown();
+
+  });
+
   toggle_submit('disable');
   fetch("/cart/create-payment", {
     method: "POST",

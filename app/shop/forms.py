@@ -48,4 +48,4 @@ class ShippingForm(FlaskForm):
 
 class ConfirmForm(FlaskForm):
     status = HiddenField('status')
-    payment_id = HiddenField('payment id', validators=[DataRequired()])
+    payment_id = HiddenField('payment id')
