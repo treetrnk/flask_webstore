@@ -75,7 +75,7 @@
         <td class="text-right">
           {% if order.status == 'Incomplete' %}
             {% if session.get('order_id') != order.id %}
-              <a href="" class="btn btn-sm btn-primary mb-2">
+              <a href="{{ url_for('shop.select_order', obj_id=order.id) }}" class="btn btn-sm btn-primary mb-2">
                 <i class="fas fa-hand-pointer"></i>
                 Select
               </a>
