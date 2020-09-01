@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import (
         DateField, HiddenField,StringField, TextAreaField, SelectField, 
         IntegerField, SelectMultipleField, FieldList, FormField, FloatField,
-        BooleanField
+        BooleanField, SubmitField
     )
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from wtforms.validators import DataRequired, Length, Optional, InputRequired, Email
@@ -71,7 +71,14 @@ class CategoryEditForm(FlaskForm):
     priority = IntegerField(f'Priority')
 
 class OrderEditForm(FlaskForm):
-    pass
+    paid = BooleanField('Paid')
+    payment_id = StringField('Payment ID', validators=[Length(max=100)])
+    payment_type = SelectField('Payment Type', validators=[Length(max=100)])
+
+class PaymentEditForm(FlaskForm):
+    paid = HiddenField('paid')
+    payment_id = StringField('Payment ID', validators=[Length(max=100)])
+    payment_type = HiddenField('Payment Type', validators=[Length(max=100)])
 
 class PageEditForm(FlaskForm):
     title = StringField(f'Title{required}', validators=[DataRequired(), Length(max=200)])

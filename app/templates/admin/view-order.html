@@ -43,19 +43,55 @@
 
     <div class="col-12 col-md">
       <h3>Payment</h3>
-      {% if order.payment_id %}
-        <i class="fas fa-credit-card"></i>
-        <b>Credit Card</b><br />
-        Payment ID: 
-        <a href="https://dashboard.stripe.com/{% if config.get('DEVELOPMENT') %}test/{% endif %}payments/{{ order.payment_id }}" target='_blank'>
-          {{ order.payment_id }}
-        </a>
+      {% if order.paid %}
+        <p>
+          <i class="fas fa-check-circle text-success"></i>
+          Paid with <b class="text-success">{{ order.payment_type }}</b>
+        </p>
+        {% if order.payment_type == 'Credit Card' %}
+          Payment ID: 
+          <a href="https://dashboard.stripe.com/{% if config.get('DEVELOPMENT') %}test/{% endif %}payments/{{ order.payment_id }}" target='_blank'>
+            {{ order.payment_id }}
+          </a>
+        {% endif %}
       {% else %}
         <p>No payment received.</p>
-        <div class="">
-
-        </div>
       {% endif %}
+        <b>Mark as Paid:</b><br />
+        <form action="{{ url_for('admin.set_payment', obj_id=order.id) }}" method="post" class="d-inline">
+          {{ form.hidden_tag() }}
+          <button type="submit" class="btn btn-secondary btn-sm" name="payment_type" value="Credit Card"> 
+            <i class="fas fa-credit-card"></i>
+            Credit Card
+          </button>
+        </form>
+        <form action="{{ url_for('admin.set_payment', obj_id=order.id) }}" method="post" class="d-inline">
+          {{ form.csrf_token }}
+          {{ form.payment_type(value='Cash') }}
+          {{ form.paid(value='y') }}
+          <button type="submit" class="btn btn-secondary btn-sm" name="payment_type" value="Cash"> 
+            <i class="fas fa-money-bill-wave"></i>
+            Cash
+          </button>
+        </form>
+        <form action="{{ url_for('admin.set_payment', obj_id=order.id) }}" method="post" class="d-inline">
+          {{ form.csrf_token }}
+          {{ form.payment_type(value='Check') }}
+          {{ form.paid(value='y') }}
+          <button type="submit" class="btn btn-secondary btn-sm" name="payment_type" value="Check"> 
+            <i class="fas fa-money-check"></i>
+            Check
+          </button>
+        </form>
+        <form action="{{ url_for('admin.set_payment', obj_id=order.id) }}" method="post" class="d-inline">
+          {{ form.csrf_token }}
+          {{ form.payment_type(value='') }}
+          {{ form.paid(value='n') }}
+          <button type="submit" class="btn btn-danger btn-sm ml-5"> 
+            <i class="fas fa-trash"></i>
+            Clear Payment
+          </button>
+        </form>
     </div>
   </div>
   

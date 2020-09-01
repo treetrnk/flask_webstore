@@ -12,7 +12,7 @@ from app.main.generic_views import SaveObjView, DeleteObjView
 from app.auth.authenticators import group_required
 from app.admin.forms import (
         UserEditForm, SettingEditForm, GroupEditForm, ProductEditForm, CategoryEditForm,
-        PageEditForm, OptionEditForm, OrderEditForm,
+        PageEditForm, OptionEditForm, OrderEditForm, PaymentEditForm,
     )
 from app.shop.forms import ShippingForm
 from app.admin.functions import save_file, delete_file
@@ -346,9 +346,11 @@ def orders():
 @group_required('admin')
 def view_order(obj_id):
     order = Order.query.filter_by(id=obj_id).first()
+    form = PaymentEditForm()
     return render_template('admin/view-order.html',
             tab='orders',
             order=order,
+            form=form,
         )
 
 class AddOrder(SaveObjView):
@@ -378,6 +380,9 @@ class EditOrder(SaveObjView):
     redirect = {'endpoint': 'admin.orders'}
     context = {'tab': 'orders'}
 
+    def extra(self):
+        self.form.payment_type.choices = [['','']] + Order.PAYMENT_TYPE_CHOICES
+
 bp.add_url_rule("/admin/order/edit/<int:obj_id>", 
         view_func=group_required('admin')(EditOrder.as_view('edit_order')))
 
@@ -389,6 +394,26 @@ class DeleteOrder(DeleteObjView):
 
 bp.add_url_rule("/admin/order/delete", 
         view_func = group_required('admin')(DeleteOrder.as_view('delete_order')))
+
+@bp.route('/admin/order/<int:obj_id>/paid', methods=['POST'])
+@group_required('admin')
+def set_payment(obj_id):
+    order = Order.query.filter_by(id=obj_id).first()
+    form = PaymentEditForm()
+    if not order:
+        flash('Failed to find order.', 'warning')
+        return redirect(url_for('admin.orders'))
+    if form.validate_on_submit():
+        for field in form:
+            current_app.logger.debug(f'{field.name}: {field.data}')
+        form.paid.data = True if form.paid.data == 'y' else False
+        form.populate_obj(obj=order)
+        db.session.commit()
+        flash('Payment updated.','success')
+        return redirect(url_for('admin.view_order', obj_id=order.id))
+    flash('Failed to update payment.','danger')
+    return redirect(url_for('admin.view_order', obj_id=order.id))
+
 
 #################
 ## INFORMATION ################################################################

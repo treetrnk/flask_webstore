@@ -410,6 +410,12 @@ class Order(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
+    PAYMENT_TYPE_CHOICES = [
+            ['Credit Card', 'Credit Card'],
+            ['Cash', 'Cash'],
+            ['Check', 'Check'],
+        ]
+
     def total_items(self, unique=False):
         if unique:
             return len(self.items)
