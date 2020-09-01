@@ -287,6 +287,9 @@ class DeleteOrder(DeleteObjView):
         if self.obj.user_id != current_user.id:
             flash('Unable to delete order.', 'warning')
             return redirect(url_for('auth.account'))
+        if session.get('order_id') == self.obj.id:
+            session['order_id'] = 0
+            session['cart_item_count'] = 0
 
 bp.add_url_rule("/cart/order/delete", 
         view_func = login_required(DeleteOrder.as_view('delete_order')))

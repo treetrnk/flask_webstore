@@ -13,6 +13,7 @@ from app.auth.forms import LoginForm, UserEditForm, SignUpForm
 from app.auth.authenticators import group_required
 from app.functions import log_change, log_new
 from app.main.generic_views import SaveObjView, DeleteObjView, ListView
+from app.main.forms import DeleteObjForm
 
 @bp.route("/login", methods=['GET', 'POST'])
 @bp.route("/login/<string:checkout>", methods=['GET', 'POST'])
@@ -94,10 +95,12 @@ def sign_up(checkout=''):
 def account():
     user = User.query.filter_by(id=current_user.id).first()
     orders = Order.query.filter_by(user_id=user.id).all()
+    delete_form =  DeleteObjForm()
     current_app.logger.debug(session)
     return render_template('auth/index.html',
             user=user,
             orders=orders,
+            delete_form=delete_form,
         )
 
 class EditUser(SaveObjView):
