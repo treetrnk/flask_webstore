@@ -239,7 +239,10 @@ def confirm():
         return redirect(url_for('shop.shipping'))
     if form.validate_on_submit():
         order.status = 'Confirmed'
-        order.payment_id = form.payment_id.data
+        if order.payment_id.data:
+            order.payment_id = form.payment_id.data
+            order.payment_type = 'Credit Card'
+            order.paid = True
         for item in order.items:
             item.option.available -= item.amount
         db.session.commit()
