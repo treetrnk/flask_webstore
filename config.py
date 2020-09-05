@@ -50,3 +50,4 @@ class Config(object):
     STRIPE_PUBLISHABLE = os.environ.get('STRIPE_PUBLISHABLE') or ''
     STRIPE_SECRET = os.environ.get('STRIPE_SECRET') or ''
     STRIPE_WEBHOOK = os.environ.get('STRIPE_WEBHOOK') or ''
+    LOW_AVAILABILITY_THRESHOLD = os.environ.get('LOW_AVAILABILITY_THRESHOLD') or 3

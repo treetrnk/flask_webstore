@@ -29,7 +29,7 @@
     </p>
 
     {% with total_avail = product.total_available() %}
-      {% if total_avail < 4 and total_avail > 0 %}
+      {% if total_avail <= config.get('LOW_AVAILABILITY_THRESHOLD') and total_avail > 0 %}
         <small class="text-danger">
           Only {{ total_avail }} available
         </small>
