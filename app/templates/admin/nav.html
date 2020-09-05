@@ -1,47 +1,57 @@
 <h1 class="text-center mb-4 text-secondary"> = Admin Panel =</h1>
 
 <ul class="nav nav-tabs mb-4">
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='products' %}active{% endif %}" href="{{ url_for('admin.products') }}">
-      <i class="fas fa-seedling"></i>
-      Products
+  <li class="nav-item dropdown">
+    <a class="nav-link {% if tab=='shop' %}active{% endif %} dropdown-toggle" data-toggle="dropdown" href="#">
+      <i class="fas fa-store"></i>
+      Shop
     </a>
+    <div class="dropdown-menu">
+      <a href="{{ url_for('admin.orders') }}" class="dropdown-item">
+        <i class="fas fa-boxes"></i>
+        Orders
+      </a>
+      <a href="{{ url_for('admin.products') }}" class="dropdown-item">
+        <i class="fas fa-seedling"></i>
+        Products
+      </a>
+      <a href="{{ url_for('admin.categories') }}" class="dropdown-item">
+        <i class="fas fa-th-large"></i>
+        Categories
+      </a>
+    </div>
   </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='categories' %}active{% endif %}" href="{{ url_for('admin.categories') }}">
-      <i class="fas fa-th-large"></i>
-      Categories
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='orders' %}active{% endif %}" href="{{ url_for('admin.orders') }}">
-      <i class="fas fa-shopping-cart"></i>
-      Orders
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='pages' %}active{% endif %}" href="{{ url_for('admin.pages') }}">
-      <i class="fas fa-file"></i>
-      Pages
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='users' %}active{% endif %}" href="{{ url_for('admin.users') }}">
+  <li class="nav-item dropdown">
+    <a class="nav-link {% if tab=='users' %}active{% endif %} dropdown-toggle" data-toggle="dropdown" href="#">
       <i class="fas fa-user"></i>
       Users
     </a>
+    <div class="dropdown-menu">
+      <a href="{{ url_for('admin.users') }}" class="dropdown-item">
+        <i class="fas fa-user"></i>
+        Users
+      </a>
+      <a href="{{ url_for('admin.groups') }}" class="dropdown-item">
+        <i class="fas fa-users"></i>
+        Groups
+      </a>
+    </div>
   </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='groups' %}active{% endif %}" href="{{ url_for('admin.groups') }}">
-      <i class="fas fa-users"></i>
-      Groups
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if tab=='settings' %}active{% endif %}" href="{{ url_for('admin.settings') }}">
+  <li class="nav-item dropdown">
+    <a class="nav-link {% if tab=='settings' %}active{% endif %} dropdown-toggle" data-toggle="dropdown" href="#">
       <i class="fas fa-cog"></i>
       Settings
     </a>
+    <div class="dropdown-menu">
+      <a href="{{ url_for('admin.pages') }}" class="dropdown-item">
+        <i class="fas fa-file"></i>
+        Pages
+      </a>
+      <a href="{{ url_for('admin.settings') }}" class="dropdown-item">
+        <i class="fas fa-cogs"></i>
+        Settings
+      </a>
+    </div>
   </li>
   <li class="nav-item">
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
@@ -50,7 +60,7 @@
 		</a>
 		<div class="dropdown-menu">
 			<a href="{{ url_for('admin.error_logs') }}" class="dropdown-item">
-				<i class="fas fa-cog"></i>
+				<i class="fas fa-exclamation-triangle"></i>
 				Error Logs
 			</a>
 		</div>

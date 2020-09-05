@@ -23,7 +23,9 @@ from app.models import (
 @bp.route('/admin')
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for('admin.products'))
+        if current_user.in_group('admin'):
+            return redirect(url_for('admin.orders'))
+        return redirect(url_for('main.index'))
     return redirect(url_for('auth.login'))
 
 ##########
@@ -87,7 +89,7 @@ bp.add_url_rule("/admin/user/delete",
 def groups():
     groups = Group.query.order_by('name')
     return render_template('admin/groups.html', 
-            tab='groups', 
+            tab='users', 
             groups=groups, 
         )
 
@@ -101,7 +103,7 @@ class AddGroup(SaveObjView):
     delete_endpoint = 'admin.delete_group'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.groups'}
-    context = {'tab': 'groups'}
+    context = {'tab': 'users'}
 
     def extra(self):
         self.form.style.choices = Group.STYLE_CHOICES
@@ -119,7 +121,7 @@ class EditGroup(SaveObjView):
     delete_endpoint = 'admin.delete_group'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.groups'}
-    context = {'tab': 'groups'}
+    context = {'tab': 'users'}
 
     def extra(self):
         self.form.style.choices = Group.STYLE_CHOICES
@@ -145,7 +147,7 @@ bp.add_url_rule("/admin/group/delete",
 def products():
     products = Product.query.order_by('name')
     return render_template('admin/products.html', 
-            tab='products', 
+            tab='shop', 
             products=products, 
         )
 
@@ -159,7 +161,7 @@ class AddProduct(SaveObjView):
     delete_endpoint = 'admin.delete_product'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
-    context = {'tab': 'products'}
+    context = {'tab': 'shop'}
 
     def extra(self):
         self.form.category_id.choices = [[0,'']] + [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
@@ -183,7 +185,7 @@ class EditProduct(SaveObjView):
     delete_endpoint = 'admin.delete_product'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
-    context = {'tab': 'products'}
+    context = {'tab': 'shop'}
 
     def extra(self):
         self.form.category_id.choices = [(c.id, c.name) for c in Category.query.order_by('priority','name').all()]
@@ -221,7 +223,7 @@ class AddOption(SaveObjView):
     delete_endpoint = 'admin.delete_option'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
-    context = {'tab': 'products'}
+    context = {'tab': 'shop'}
 
     def extra(self):
         if self.parent_id:
@@ -245,7 +247,7 @@ class EditOption(SaveObjView):
     delete_endpoint = 'admin.delete_option'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.products'}
-    context = {'tab': 'products'}
+    context = {'tab': 'shop'}
 
     def pre_post(self):
         if self.form.image.data:
@@ -275,7 +277,7 @@ bp.add_url_rule("/admin/option/delete",
 def categories():
     categories = Category.query.order_by('name')
     return render_template('admin/categories.html', 
-            tab='categories', 
+            tab='shop', 
             categories=categories, 
         )
 
@@ -289,7 +291,7 @@ class AddCategory(SaveObjView):
     delete_endpoint = 'admin.delete_category'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.categories'}
-    context = {'tab': 'categories'}
+    context = {'tab': 'shop'}
 
     def pre_post(self):
         if self.form.image.data:
@@ -309,7 +311,7 @@ class EditCategory(SaveObjView):
     delete_endpoint = 'admin.delete_category'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.categories'}
-    context = {'tab': 'categories'}
+    context = {'tab': 'shop'}
 
     def pre_post(self):
         if self.form.image.data:
@@ -338,7 +340,7 @@ bp.add_url_rule("/admin/category/delete",
 def orders():
     orders = Order.query.all()
     return render_template('admin/orders.html', 
-            tab='orders', 
+            tab='shop', 
             orders=orders, 
         )
 
@@ -348,7 +350,7 @@ def view_order(obj_id):
     order = Order.query.filter_by(id=obj_id).first()
     form = PaymentEditForm()
     return render_template('admin/view-order.html',
-            tab='orders',
+            tab='shop',
             order=order,
             form=form,
         )
@@ -363,7 +365,7 @@ class AddOrder(SaveObjView):
     delete_endpoint = 'admin.delete_order'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.orders'}
-    context = {'tab': 'orders'}
+    context = {'tab': 'shop'}
 
 bp.add_url_rule("/admin/order/add", 
         view_func=group_required('admin')(AddOrder.as_view('add_order')))
@@ -378,7 +380,7 @@ class EditOrder(SaveObjView):
     delete_endpoint = 'admin.delete_order'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.orders'}
-    context = {'tab': 'orders'}
+    context = {'tab': 'shop'}
 
     def extra(self):
         self.form.payment_type.choices = [['','']] + Order.PAYMENT_TYPE_CHOICES
@@ -429,7 +431,7 @@ class AddInformation(SaveObjView):
     delete_endpoint = 'admin.delete_information'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.orders'}
-    context = {'tab': 'orders'}
+    context = {'tab': 'shop'}
 
 bp.add_url_rule("/admin/information/add", 
         view_func=group_required('admin')(AddInformation.as_view('add_information')))
@@ -444,7 +446,7 @@ class EditInformation(SaveObjView):
     delete_endpoint = 'admin.delete_information'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.orders'}
-    context = {'tab': 'orders'}
+    context = {'tab': 'shop'}
 
     def extra(self):
         self.form.state.choices = Information.STATE_CHOICES
@@ -477,7 +479,7 @@ bp.add_url_rule("/admin/information/delete",
 def pages():
     pages = Page.query.order_by('title')
     return render_template('admin/pages.html', 
-            tab='pages', 
+            tab='settings', 
             pages=pages, 
         )
 
@@ -491,7 +493,7 @@ class AddPage(SaveObjView):
     delete_endpoint = 'admin.delete_page'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.pages'}
-    context = {'tab': 'pages'}
+    context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/page/add", 
         view_func=group_required('admin')(AddPage.as_view('add_page')))
@@ -506,7 +508,7 @@ class EditPage(SaveObjView):
     delete_endpoint = 'admin.delete_page'
     template = 'admin/object-edit.html'
     redirect = {'endpoint': 'admin.pages'}
-    context = {'tab': 'pages'}
+    context = {'tab': 'settings'}
 
 bp.add_url_rule("/admin/page/edit/<int:obj_id>", 
         view_func=group_required('admin')(EditPage.as_view('edit_page')))
