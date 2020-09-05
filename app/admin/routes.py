@@ -383,6 +383,7 @@ class EditOrder(SaveObjView):
     context = {'tab': 'shop'}
 
     def extra(self):
+        self.form.status.choices = Order.STATUS_CHOICES
         self.form.payment_type.choices = [['','']] + Order.PAYMENT_TYPE_CHOICES
 
 bp.add_url_rule("/admin/order/edit/<int:obj_id>", 

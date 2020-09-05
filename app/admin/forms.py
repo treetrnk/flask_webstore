@@ -71,9 +71,10 @@ class CategoryEditForm(FlaskForm):
     priority = IntegerField(f'Priority')
 
 class OrderEditForm(FlaskForm):
-    paid = BooleanField('Paid')
+    status = SelectField('Status')
     payment_id = StringField('Payment ID', validators=[Length(max=100)])
     payment_type = SelectField('Payment Type', validators=[Length(max=100)])
+    paid = BooleanField('Paid')
 
 class PaymentEditForm(FlaskForm):
     paid = HiddenField('paid')

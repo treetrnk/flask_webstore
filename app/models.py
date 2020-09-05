@@ -410,6 +410,13 @@ class Order(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow, default=datetime.utcnow)
 
+    STATUS_CHOICES = [
+            ['Incomplete', 'Incomplete - Unconfirmed order'],
+            ['Confirmed', 'Confirmed - Customer has stated intent to buy or has already paid'],
+            ['Packaged', 'Packaged - Ready for delivery'],
+            ['Complete', 'Complete - Order has been delivered or picked up'],
+        ]
+
     PAYMENT_TYPE_CHOICES = [
             ['Credit Card', 'Credit Card'],
             ['Cash', 'Cash'],
