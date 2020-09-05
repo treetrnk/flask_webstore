@@ -19,6 +19,7 @@ from app.admin.functions import save_file, delete_file
 from app.models import (
         User, Group, Category, Product, Setting, Page, Option, Order, Information
     )
+from sqlalchemy import or_
 
 @bp.route('/admin')
 def index():
@@ -336,12 +337,19 @@ bp.add_url_rule("/admin/category/delete",
 ##########
 
 @bp.route('/admin/orders')
+@bp.route('/admin/orders/<string:status>')
 @group_required('admin')
-def orders():
-    orders = Order.query.all()
+def orders(status='confirmed'):
+    if status.lower() == 'all':
+        orders = Order.query.all()
+    elif status.lower() == 'confirmed':
+        orders = Order.query.filter(or_(Order.status.ilike(status),Order.status.ilike('packaged'))).all()
+    else:
+        orders = Order.query.filter(Order.status.ilike(status)).all()
     return render_template('admin/orders.html', 
             tab='shop', 
             orders=orders, 
+            status=status,
         )
 
 @bp.route('/admin/order/<int:obj_id>')
