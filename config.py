@@ -51,3 +51,4 @@ class Config(object):
     STRIPE_SECRET = os.environ.get('STRIPE_SECRET') or ''
     STRIPE_WEBHOOK = os.environ.get('STRIPE_WEBHOOK') or ''
     LOW_AVAILABILITY_THRESHOLD = os.environ.get('LOW_AVAILABILITY_THRESHOLD') or 3
+    LOW_AVAILABILITY_THRESHOLD = int(LOW_AVAILABILITY_THRESHOLD)
