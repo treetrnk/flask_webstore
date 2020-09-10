@@ -13,7 +13,7 @@ from app.functions import log_new, log_change
 from app.main.generic_views import SaveObjView, DeleteObjView
 from app.main.forms import DeleteObjForm
 from app.auth.authenticators import group_required
-from app.shop.forms import AddToCartForm, CartUpdateForm, ShippingForm, ConfirmForm
+from app.shop.forms import AddToCartForm, CartUpdateForm, ShippingForm, ConfirmForm, PickUpForm
 from app.models import (
         Product, Category, Order, Item, Option, Information
     )
@@ -148,8 +148,17 @@ class DeleteItem(DeleteObjView):
 bp.add_url_rule("/cart/item/delete", 
         view_func = DeleteItem.as_view('delete_item'))
 
-@bp.route('/cart/shipping', methods=['GET','POST'])
+@bp.route('/cart/shipping')
 def shipping():
+    order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+    if order and order.shipping_type == 'pickup':
+        return redirect(url_for('shop.pickup'))
+    if request.args.get('type') and request.args.get('type').lower() == 'pickup':
+        return redirect(url_for('shop.pickup'))
+    return redirect(url_for('shop.delivery'))
+
+@bp.route('/cart/shipping/delivery', methods=['GET','POST'])
+def delivery():
     order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
     if not order:
         return redirect(url_for('shop.cart'))
@@ -178,6 +187,33 @@ def shipping():
     return render_template('shop/shipping.html',
             form=form,
             order=order,
+            shipping_type='delivery',
+        )
+
+@bp.route('/cart/shipping/pickup', methods=['GET','POST'])
+def pickup():
+    order = Order.query.filter_by(id=session.get('order_id'), status="Incomplete").first()
+    current_app.logger.debug(order.shipping_type)
+    current_app.logger.debug(order.shipping_time)
+    current_app.logger.debug(order.shipping)
+    if not order:
+        return redirect(url_for('shop.cart'))
+    shipping = order.shipping if order.shipping else Information()
+    form = PickUpForm(obj=order)
+    form.sdate.choices = order.pickup_dates()
+    current_app.logger.debug(form.sdate.choices)
+    current_app.logger.debug(form.sdate.data)
+    form.stime.choices = order.pickup_times()
+    if form.validate_on_submit():
+        form.populate_obj(order)
+        order.shipping_type = 'pickup'
+        order.set_shipping_time(form.sdate.data, form.stime.data)
+        db.session.commit()
+        return redirect(url_for('shop.confirm'))
+    return render_template('shop/shipping.html',
+            form=form,
+            order=order,
+            shipping_type='pickup',
         )
 
 class EditShipping(SaveObjView):
@@ -235,7 +271,7 @@ def confirm():
     if not order or order.status != 'Incomplete':
         return redirect(url_for('shop.index'))
     form = ConfirmForm(obj=order)
-    if not order.shipping:
+    if not order.has_shipping():
         return redirect(url_for('shop.shipping'))
     if form.validate_on_submit():
         order.status = 'Confirmed'

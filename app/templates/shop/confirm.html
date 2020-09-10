@@ -5,44 +5,69 @@
 
   <h1>Confirm Your Order</h1>
 
-  <h3 class="mt-4">Shipping To:</h3>
 
-  <div class="row">
-    <div class="col-md-4 col-12 mb-3">
-      <p>
-        <b>
-          {{ order.shipping.full_name }}
-        </b><br />
-        {{ order.shipping.email }}<br />
-        {% if order.shipping.phone %}
-          {{ order.shipping.phone }}<br />
-        {% endif %}
-        {{ order.shipping.address_1 }}<br />
-        {% if order.shipping.address_2 %}
-          {{ order.shipping.address_2 }}<br />
-        {% endif %}
-        {{ order.shipping.city }},
-        {{ order.shipping.state }}<br />
-        {{ order.shipping.zipcode }}
-      </p>
-      <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
-        <i class="fas fa-cogs"></i>
-        Edit Shipping
-      </a>
+  {% if order.shipping_type == 'delivery' %}
 
-    </div>
-    <div class="col">
+    <h3 class="mt-4">Delivery To:</h3>
+    <div class="row">
+      <div class="col-md-4 col-12 mb-3">
+        <p>
+          <b>
+            {{ order.shipping.full_name }}
+          </b><br />
+          {{ order.shipping.email }}<br />
+          {% if order.shipping.phone %}
+            {{ order.shipping.phone }}<br />
+          {% endif %}
+          {{ order.shipping.address_1 }}<br />
+          {% if order.shipping.address_2 %}
+            {{ order.shipping.address_2 }}<br />
+          {% endif %}
+          {{ order.shipping.city }},
+          {{ order.shipping.state }}<br />
+          {{ order.shipping.zipcode }}
+        </p>
 
-      <div class="alert alert-info">
-        <b>
-          <i class="fas fa-info-circle"></i>
-          Thursday Deliveries:
-        </b>
-        We currently do deliveries on Thursday evenings. If you have a special request, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we will try to find a solution.
+        <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
+          <i class="fas fa-cogs"></i>
+          Edit Shipping
+        </a>
+
       </div>
+      <div class="col">
 
+        <div class="alert alert-info">
+          <b>
+            <i class="fas fa-info-circle"></i>
+            Thursday Deliveries:
+          </b>
+          We currently do deliveries on Thursday evenings. If you have a special request, please <a href="mailto:contact@littleharehomestead.com">email us</a> and we will try to find a solution.
+        </div>
+
+      </div>
     </div>
-  </div>
+  {% elif order.shipping_type == 'pickup'%}
+
+    <h3 class="mt-4">Pick Up:</h3>
+    <div class="row">
+      <div class="col-md-4 col-12 mb-3">
+        <p>
+          <b>Pickup Date:</b> {{ order.shipping_time.strftime('%A %b. %-d, %Y') }}<br />
+          <b>Pickup Time:</b> {{ order.shipping_time.strftime('%-I:%M %p') }}
+        </p>
+        <p>
+          You can pick up your order at the corner of Prince and Liberty St. Please text or call 717-781-0268 when you arrive.
+        </p>
+        <a href="{{ url_for('shop.pickup') }}" class="btn btn-sm btn-secondary">
+          <i class="fas fa-cogs"></i>
+          Edit Shipping
+        </a>
+      </div>
+      <div class="col">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m21!1m12!1m3!1d763.5126128069777!2d-76.31014062987038!3d40.05197503465682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m6!3e0!4m0!4m3!3m2!1d40.052031!2d-76.3100796!5e0!3m2!1sen!2sus!4v1599770033204!5m2!1sen!2sus" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+      </div>
+    </div>
+  {% endif %}
   
   <h3 class="mt-4">Items</h3>
 	{% if order and order.items %}
@@ -138,7 +163,7 @@
 
       <div class="alert alert-info">
         <i class="fas fa-info-circle"></i>
-        Payment will be expected when your order is delivered. We only accept cash and check at the moment. If paying with cash, please have exact change.
+        Payment will be expected in full when your order is delivered. We only accept cash and check at the moment. If paying with cash, please have exact change.
       </div>
 
       <div>

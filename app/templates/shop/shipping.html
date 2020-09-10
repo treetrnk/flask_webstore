@@ -1,13 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>Shipping Information</h1>
+<h1 class="mb-4">Shipping Information</h1>
 
-		<form method="post" action="">
+<div class="row">
+  <label class="col-from-label col-md-3 text-md-right mt-2">
+    Shipping Type *
+  </label>
+  <div class="col">
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item">
+        <a href="{{ url_for('shop.delivery') }}" class="nav-link px-5 {% if shipping_type == 'delivery' %}active{% endif %}">
+          <i class="fas fa-parachute-box"></i>
+          Delivery
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ url_for('shop.pickup') }}" class="nav-link px-5 {% if shipping_type == 'pickup' %}active{% endif %}">
+          <i class="fas fa-people-carry"></i>
+          Pick Up
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+		<form method="post" action="" class="mb-4">
 			{{ form.hidden_tag() }}
 
       {% include 'form-fields.html' %}
-    
+
 			<div class="row">
 				<div class="col-md-3"></div>
 				<div class="col">
@@ -24,5 +47,16 @@
 
     </form>
 
+      {% if shipping_type == 'pickup' %}
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col">
+            <p>
+              You can pick up your order at the corner of Prince and Liberty St. Please text or call 717-781-0268 when you arrive.
+            </p>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m21!1m12!1m3!1d763.5126128069777!2d-76.31014062987038!3d40.05197503465682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m6!3e0!4m0!4m3!3m2!1d40.052031!2d-76.3100796!5e0!3m2!1sen!2sus!4v1599770033204!5m2!1sen!2sus" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+          </div>
+      {% endif %}
+    
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-        HiddenField, IntegerField, StringField, SelectField
+        HiddenField, IntegerField, StringField, SelectField, DateField, TimeField,
     )
 from wtforms.validators import DataRequired, NumberRange, Length, Email, Optional, ValidationError
 
@@ -46,6 +46,10 @@ class ShippingForm(FlaskForm):
             ]
         if self.zipcode.data not in accepted_zipcodes:
             raise ValidationError('We are currently only delivering to the following zipcodes: ' + ', '.join(accepted_zipcodes))
+
+class PickUpForm(FlaskForm):
+    sdate = SelectField(f'Pickup Date{required}', validators=[DataRequired()])
+    stime = SelectField(f'Pickup Time{required}', validators=[DataRequired()])
 
 class ConfirmForm(FlaskForm):
     status = HiddenField('status')

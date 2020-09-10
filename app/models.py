@@ -398,6 +398,8 @@ class Order(db.Model):
     status = db.Column(db.String(100), default='Incomplete')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=backref('orders', order_by='Order.created.desc()'), lazy=True)
+    shipping_type = db.Column(db.String(100))
+    shipping_time = db.Column(db.DateTime)
     shipping_id = db.Column(db.Integer, db.ForeignKey('information.id'))
     shipping = db.relationship('Information', foreign_keys=shipping_id, 
             backref='shipping_orders', lazy=True)
@@ -422,6 +424,13 @@ class Order(db.Model):
             ['Cash', 'Cash'],
             ['Check', 'Check'],
         ]
+
+    def has_shipping(self):
+        if self.shipping_type == 'delivery' and self.shipping:
+            return True
+        if self.shipping_type == 'pickup' and self.shipping_time:
+            return True
+        return False
 
     def total_items(self, unique=False):
         if unique:
@@ -455,6 +464,32 @@ class Order(db.Model):
             if item.option_id == option_id:
                 return item
         return False
+
+    def pickup_dates(self):
+        now = datetime.now()
+        first_day = now + timedelta(days=2)
+        days = 0
+        output = []
+        while days < 7:
+            new_date = first_day + timedelta(days=days)
+            output += [[str(new_date.date()), new_date.strftime('%a. %b %-d, %Y')]]
+            days += 1
+        return output
+
+    def pickup_times(self):
+        times = [
+                '8 AM','9 AM','10 AM','11 AM',
+                '12 PM','1 PM','2 PM','3 PM',
+                '4 PM','5 PM','6 PM','7 PM','8 PM'
+            ]
+        output = []
+        for time in times:
+            output += [[time, time]]
+        return output
+    
+    def set_shipping_time(self, sdate, stime):
+        shipping_time = datetime.strptime(f'{sdate} {stime}', '%Y-%m-%d %I %p')
+        self.shipping_time = shipping_time
 
     def notify_confirmed(self):
         sender = current_app.config['MAIL_DEFAULT_SENDER']
