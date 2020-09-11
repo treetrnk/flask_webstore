@@ -19,26 +19,43 @@
   <div class="row mt-3">
     <div class="col-12 col-md">
       <h3>Shipping</h3>
-      <p>
-        <b>
-          {{ order.shipping.full_name }}
-        </b><br />
-        {{ order.shipping.email }}<br />
-        {% if order.shipping.phone %}
-          {{ order.shipping.phone }}<br />
-        {% endif %}
-        {{ order.shipping.address_1 }}<br />
-        {% if order.shipping.address_2 %}
-          {{ order.shipping.address_2 }}<br />
-        {% endif %}
-        {{ order.shipping.city }},
-        {{ order.shipping.state }}<br />
-        {{ order.shipping.zipcode }}
-      </p>
-      <a href="{{ url_for('admin.edit_order_information', obj_id=order.shipping_id, parent_id=order.id) }}" class="btn btn-sm btn-secondary">
-        <i class="fas fa-cogs"></i>
-        Edit Shipping
-      </a>
+      {% if order.shipping_type == 'delivery' %}
+        <p>
+          <b>
+            {{ order.shipping.full_name }}
+          </b><br />
+          {{ order.email }}<br />
+          {% if order.phone %}
+            {{ order.phone }}<br />
+          {% endif %}
+          {{ order.shipping.address_1 }}<br />
+          {% if order.shipping.address_2 %}
+            {{ order.shipping.address_2 }}<br />
+          {% endif %}
+          {{ order.shipping.city }},
+          {{ order.shipping.state }}<br />
+          {{ order.shipping.zipcode }}
+        </p>
+        <a href="{{ url_for('admin.edit_order_information', obj_id=order.shipping_id, parent_id=order.id) }}" class="btn btn-sm btn-secondary">
+          <i class="fas fa-cogs"></i>
+          Edit Shipping
+        </a>
+      {% elif order.shipping_type == 'pickup' %}
+        <h5 class="mt-4">Pick Up</h5>
+        <div class="row">
+          <div class="col-md-4 col-12 mb-3">
+            <p>
+              <b>Pickup Date:</b> {{ order.shipping_time.strftime('%A %b. %-d, %Y') }}<br />
+              <b>Pickup Time:</b> {{ order.shipping_time.strftime('%-I:%M %p') }}
+            </p>
+            <h5>Contact</h5>
+            <p>
+              <b>Email:</b> <a href="mailto:{{ order.email }}">{{ order.email }}</a><br />
+              {% if order.phone %}
+                <b>Phone:</b> {{ order.phone }}<br />
+              {% endif %}
+            </p>
+      {% endif %}
     </div>
 
     <div class="col-12 col-md">

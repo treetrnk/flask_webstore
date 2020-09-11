@@ -48,6 +48,8 @@ class ShippingForm(FlaskForm):
             raise ValidationError('We are currently only delivering to the following zipcodes: ' + ', '.join(accepted_zipcodes))
 
 class PickUpForm(FlaskForm):
+    email = StringField(f'Email{required}', validators=[DataRequired(), Length(max=150), Email()])
+    phone = StringField('Phone', validators=[Length(min=10, max=12), Optional()])
     sdate = SelectField(f'Pickup Date{required}', validators=[DataRequired()])
     stime = SelectField(f'Pickup Time{required}', validators=[DataRequired()])
 

@@ -167,6 +167,9 @@ def delivery():
     form.state.choices = Information.STATE_CHOICES
     if form.validate_on_submit():
         form.populate_obj(shipping)
+        order.email = form.email.data
+        order.phone = form.phone.data
+        order.shipping_type = 'delivery'
         shipping.type = 'shipping'
         if current_user.is_authenticated:
             shipping.user_id = current_user.id
@@ -184,6 +187,8 @@ def delivery():
             form.email.data = current_user.email
         if current_user.phone:
             form.phone.data = current_user.phone
+    form.email.data=order.email
+    form.phone.data=order.phone
     return render_template('shop/shipping.html',
             form=form,
             order=order,

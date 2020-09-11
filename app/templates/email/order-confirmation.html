@@ -18,22 +18,43 @@
         out a solution.
       </p>
 
-      <h3>Shipping To:</h3>
+      {% if order.shipping_type == 'delivery' %}
+        <h3>Shipping To:</h3>
+        <p>
+          <b>
+            {{ order.shipping.full_name }}
+          </b><br />
+          {{ order.shipping.email }}<br />
+          {% if order.shipping.phone %}
+            {{ order.shipping.phone }}<br />
+          {% endif %}
+          {{ order.shipping.address_1 }}<br />
+          {% if order.shipping.address_2 %}
+            {{ order.shipping.address_2 }}<br />
+          {% endif %}
+          {{ order.shipping.city }},
+          {{ order.shipping.state }}<br />
+          {{ order.shipping.zipcode }}
+        </p>
+      {% elif order.shipping_type == 'pickup' %}
+
+        <h3 class="mt-4">Pick Up:</h3>
+        <p>
+          <b>Pickup Date:</b> {{ order.shipping_time.strftime('%A %b. %-d, %Y') }}<br />
+          <b>Pickup Time:</b> {{ order.shipping_time.strftime('%-I:%M %p') }}
+        </p>
+        <p>
+        You can pick up your order at <a href="https://goo.gl/maps/zAhMMxQjvY9hDLn48">the corner of Prince and Liberty St</a> in Lancaster, PA. Please text or call Nathan at 717-781-0268 when you arrive.
+        </p>
+      {% endif %}
+
+      <h3>Payment</h3>
       <p>
-        <b>
-          {{ order.shipping.full_name }}
-        </b><br />
-        {{ order.shipping.email }}<br />
-        {% if order.shipping.phone %}
-          {{ order.shipping.phone }}<br />
+        {% if order.payment_type %}
+          Thank you for paying with <b>{{ order.pyment_type }}</b>.
+        {% else %}
+          Not yet paid. Payment will be expected in full upon delivery.
         {% endif %}
-        {{ order.shipping.address_1 }}<br />
-        {% if order.shipping.address_2 %}
-          {{ order.shipping.address_2 }}<br />
-        {% endif %}
-        {{ order.shipping.city }},
-        {{ order.shipping.state }}<br />
-        {{ order.shipping.zipcode }}
       </p>
 
 			<h3>Items</h3>

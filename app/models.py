@@ -398,6 +398,8 @@ class Order(db.Model):
     status = db.Column(db.String(100), default='Incomplete')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=backref('orders', order_by='Order.created.desc()'), lazy=True)
+    email = db.Column(db.String(150))
+    phone = db.Column(db.String(20))
     shipping_type = db.Column(db.String(100))
     shipping_time = db.Column(db.DateTime)
     shipping_id = db.Column(db.Integer, db.ForeignKey('information.id'))
@@ -501,7 +503,7 @@ class Order(db.Model):
         send_email(
                 subject,
                 sender,
-                [self.shipping.email, current_app.config.get('MAIL_USERNAME')],
+                [self.email, current_app.config.get('MAIL_USERNAME')],
                 body,
                 render_template('email/order-confirmation.html', order=self),
             )
@@ -543,8 +545,6 @@ class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     full_name = db.Column(db.String(150), nullable=False)
-    email = db.Column(db.String(150))
-    phone = db.Column(db.String(20))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=backref('informations', order_by='Information.default.desc(),Information.name'), lazy=True)
     type = db.Column(db.String(50), default="shipping")

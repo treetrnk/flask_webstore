@@ -15,9 +15,9 @@
           <b>
             {{ order.shipping.full_name }}
           </b><br />
-          {{ order.shipping.email }}<br />
-          {% if order.shipping.phone %}
-            {{ order.shipping.phone }}<br />
+          {{ order.email }}<br />
+          {% if order.phone %}
+            {{ order.phone }}<br />
           {% endif %}
           {{ order.shipping.address_1 }}<br />
           {% if order.shipping.address_2 %}
@@ -28,7 +28,7 @@
           {{ order.shipping.zipcode }}
         </p>
 
-        <a href="{{ url_for('shop.edit_shipping') }}" class="btn btn-sm btn-secondary">
+        <a href="{{ url_for('shop.delivery') }}" class="btn btn-sm btn-secondary">
           <i class="fas fa-cogs"></i>
           Edit Shipping
         </a>
@@ -55,8 +55,15 @@
           <b>Pickup Date:</b> {{ order.shipping_time.strftime('%A %b. %-d, %Y') }}<br />
           <b>Pickup Time:</b> {{ order.shipping_time.strftime('%-I:%M %p') }}
         </p>
+        <h5>Contact</h5>
         <p>
-          You can pick up your order at the corner of Prince and Liberty St. Please text or call 717-781-0268 when you arrive.
+          <b>Email:</b> {{ order.email }}<br />
+          {% if order.phone %}
+            <b>Phone:</b> {{ order.phone }}<br />
+          {% endif %}
+        </p>
+        <p>
+          You can pick up your order at the corner of Prince and Liberty St. Please text or call Nathan at 717-781-0268 when you arrive.
         </p>
         <a href="{{ url_for('shop.pickup') }}" class="btn btn-sm btn-secondary">
           <i class="fas fa-cogs"></i>
