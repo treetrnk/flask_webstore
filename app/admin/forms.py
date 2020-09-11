@@ -72,6 +72,8 @@ class CategoryEditForm(FlaskForm):
 
 class OrderEditForm(FlaskForm):
     status = SelectField('Status')
+    email = StringField('Email', validators=[DataRequired(), Length(max=150), Email()])
+    phone = StringField('Phone', validators=[DataRequired(), Length(max=20)])
     payment_id = StringField('Payment ID', validators=[Length(max=100)])
     payment_type = SelectField('Payment Type', validators=[Length(max=100)])
     paid = BooleanField('Paid')
