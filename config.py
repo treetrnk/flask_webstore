@@ -23,8 +23,8 @@ class Config(object):
     SQLALCHEMY_POOL_TIMEOUT = os.environ.get('SQLALCHEMY_POOL_TIMEOUT') or 60
     SESSION_PERMANENT = True
     SESSION_TYPE = 'filesystem'
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=9)
-    REMEMBER_COOKIE_DURATION = timedelta(hours=9)
+    PERMANENT_SESSION_LIFETIME = timedelta(days=150)
+    REMEMBER_COOKIE_DURATION = timedelta(days=150)
     # The maximum number of items the session stores 
     # before it starts deleting some, default 500
     SESSION_FILE_THRESHOLD = os.environ.get('SESSION_FILE_THRESHOLD') or 500
